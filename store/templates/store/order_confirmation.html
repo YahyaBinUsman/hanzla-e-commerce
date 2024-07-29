@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Confirmation</title>
+    <style>
+        body {
+            background-color: white;
+            color: #0ebab1;
+            font-family: Arial, sans-serif;
+        }
+        .navbar {
+            background-color: white;
+            padding: 1em;
+        }
+        .navbar a {
+            color: #0ebab1;
+            text-decoration: none;
+            margin: 0 1em;
+        }
+        .container {
+            max-width: 800px;
+            margin: 2em auto;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <a href="{% url 'home' %}">Home</a>
+        <a href="{% url 'product_list' category='towel' %}">Towels</a>
+        <a href="{% url 'product_list' category='bedsheet' %}">Bed Sheets</a>
+        <a href="{% url 'product_list' category='ahram' %}">Ahram</a>
+        <a href="{% url 'product_list' category='slipper' %}">Slippers</a>
+        <a href="{% url 'view_cart' %}">View Cart</a>
+    </nav>
+    <div class="container">
+        <h1>Thank you for your order!</h1>
+        <p>Your order has been placed successfully.</p>
+    </div>
+</body>
+</html>

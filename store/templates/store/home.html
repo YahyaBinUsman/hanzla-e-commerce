@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+    <style>
+        body {
+            background-color: #f4f4f4;
+            color: #333;
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        .navbar {
+            background-color:  #0ebab1;
+            padding: 1em 2em;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            transition: background-color 0.3s ease;
+        }
+        
+        .navbar .menu-icon {
+            display: none;
+            font-size: 2em;
+            cursor: pointer;
+            color: white;
+        }
+        
+        .navbar .navbar-links {
+            display: flex;
+            gap: 1.5em;
+            flex-direction: row;
+        }
+        
+        .navbar .navbar-links a {
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1em;
+            display: block;
+            padding: 0.5em 1em;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        
+        .navbar .navbar-links a:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+            color: #e0f7f6;
+        }
+        
+        .navbar.active .navbar-links {
+            display: block;
+            background-color: #0ebab1;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 100%;
+            padding: 1em;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            border-radius: 8px;
+        }
+        
+        .navbar.active .navbar-links a {
+            color: white;
+            font-size: 1.2em;
+            margin: 0.5em 0;
+            border-bottom: 1px solid #e0f7f6;
+            padding: 0.8em 1em;
+            text-align: left;
+        }
+        
+        .navbar.active .navbar-links a:last-child {
+            border-bottom: none;
+        }
+        
+        .jumbotron {
+            text-align: center;
+            padding: 7em 2em;
+            background: linear-gradient(135deg, #004d40, #00bfae);
+            color: #fff;
+            margin: 5em 2em 2em 2em;
+            border-radius: 15px;
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
+            position: relative;
+        }
+        .jumbotron::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            z-index: -1;
+        }
+        .jumbotron h1 {
+            margin: 0;
+            font-size: 4em;
+            font-weight: 700;
+        }
+        .jumbotron p {
+            font-size: 1.5em;
+            margin: 1em 0;
+        }
+        .btn {
+            background-color: #fff;
+            color: #004d40;
+            border: 2px solid #004d40;
+            padding: 0.8em 2.2em;
+            text-decoration: none;
+            border-radius: 30px;
+            font-size: 1.2em;
+            margin: 0.5em;
+            display: inline-block;
+            transition: background-color 0.3s ease, color 0.3s ease, transform 0.3s ease;
+        }
+        .btn:hover {
+            background-color: #004d40;
+            color: #fff;
+            transform: translateY(-3px);
+        }
+        .section {
+            padding: 5em 2em;
+            margin: 2em auto;
+            max-width: 1200px;
+            background-color: #fff;
+            border-radius: 15px;
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            border-top: 8px solid #004d40;
+        }
+        .section h2 {
+            color: #004d40;
+            font-size: 2.8em;
+            margin-bottom: 1em;
+            position: relative;
+            display: inline-block;
+            padding-bottom: 0.6em;
+            font-weight: 600;
+        }
+        .section h2::after {
+            content: '';
+            display: block;
+            width: 100px;
+            height: 5px;
+            background: #004d40;
+            border-radius: 2px;
+            position: absolute;
+            left: 50%;
+            bottom: 0;
+            transform: translateX(-50%);
+        }
+        .section p {
+            font-size: 1.3em;
+            line-height: 1.6;
+            color: #555;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        .section .cta {
+            margin-top: 2em;
+            padding: 1em;
+            background-color: #e0f2f1;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            display: inline-block;
+            font-size: 1.3em;
+        }
+        .section .cta a {
+            text-decoration: none;
+            color: #004d40;
+            font-weight: bold;
+            transition: color 0.3s ease;
+        }
+        .section .cta a:hover {
+            color: #003d33;
+        }
+        #contact-us form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            max-width: 700px;
+            width: 100%;
+            margin: 0 auto;
+        }
+        #contact-us input, #contact-us textarea {
+            width: 100%;
+            padding: 1em;
+            margin: 0.7em 0;
+            border-radius: 7px;
+            border: 1px solid #ddd;
+            font-size: 1.1em;
+            box-sizing: border-box;
+        }
+        #contact-us textarea {
+            resize: vertical;
+            min-height: 150px;
+        }
+        #contact-us button {
+            background-color: #004d40;
+            color: #fff;
+            border: none;
+            padding: 0.8em 2.5em;
+            border-radius: 30px;
+            font-size: 1.2em;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+        #contact-us button:hover {
+            background-color: #003d33;
+            transform: translateY(-2px);
+        }
+        @media (max-width: 1024px) {
+            .navbar .menu-icon {
+                display: block;
+            }
+            .navbar .navbar-links {
+                display: none;
+                width: 100%;
+                text-align: center;
+            }
+            .navbar.active .navbar-links {
+                display: flex;
+                flex-direction: column;
+                gap: 1em;
+            }
+        }
+        @media (max-width: 768px) {
+            .jumbotron {
+                padding: 5em 1em;
+                margin: 4em 1em;
+            }
+            .section {
+                padding: 4em 1em;
+                margin: 2em 1em;
+            }
+        }
+        @media (max-width: 480px) {
+            .jumbotron h1 {
+                font-size: 2em;
+            }
+            .jumbotron p {
+                font-size: 1.2em;
+            }
+            .section h2 {
+                font-size: 2.3em;
+            }
+            .section p {
+                font-size: 1.1em;
+            }
+            .btn {
+                padding: 0.8em 1.8em;
+                font-size: 1.1em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="menu-icon" onclick="toggleNavbar()">☰</div>
+        <div class="navbar-links">
+            <a href="{% url 'home' %}">Home</a>
+            <a href="{% url 'product_list' category='towel' %}">Towels</a>
+            <a href="{% url 'product_list' category='bedsheet' %}">Bed Sheets</a>
+            <a href="{% url 'product_list' category='ahram' %}">Ahram</a>
+            <a href="{% url 'product_list' category='slipper' %}">Slippers</a>
+            <a href="{% url 'view_cart' %}">View Cart</a>
+        </div>
+    </nav>
+    <div class="jumbotron">
+        <h1>Welcome to our E-commerce Store</h1>
+        <p>Shop for the best products with exclusive deals and discounts.</p>
+        <a class="btn" href="{% url 'product_list' category='towel' %}">Shop Towels</a>
+        <a class="btn" href="{% url 'product_list' category='bedsheet' %}">Shop Bed Sheets</a>
+        <a class="btn" href="{% url 'product_list' category='ahram' %}">Shop Ahram</a>
+        <a class="btn" href="{% url 'product_list' category='slipper' %}">Shop Slippers</a>
+    </div>
+    <div class="section" id="about-us">
+        <h2>About Us</h2>
+        <p>We are a premier e-commerce store dedicated to offering premium home products with an emphasis on quality and customer satisfaction. Our mission is to deliver an exceptional online shopping experience and unparalleled service.</p>
+        <div class="cta"><a href="#">Discover Our Story</a></div>
+    </div>
+    <div class="section" id="featured-products">
+        <h2>Featured Products</h2>
+        <p>Explore our exclusive selection of top-rated products that have garnered rave reviews from our customers. From luxurious towels to elegant bed sheets, our featured products embody the best in craftsmanship and design.</p>
+        <div class="cta"><a href="#">View All Products</a></div>
+    </div>
+    <div class="section" id="new-arrivals">
+        <h2>New Arrivals</h2>
+        <p>Stay ahead of the trends with our latest additions. Our new arrivals showcase the freshest styles and innovations in home products, ensuring you always find something new and exciting.</p>
+        <div class="cta"><a href="#">Browse New Arrivals</a></div>
+    </div>
+    <div class="section" id="special-offers">
+        <h2>Special Offers</h2>
+        <p>Don’t miss out on our limited-time offers and promotions. Enjoy exclusive discounts and special deals on select products to make your shopping experience even better.</p>
+        <div class="cta"><a href="#">See Special Offers</a></div>
+    </div>
+    <div class="section" id="contact-us">
+        <h2>Contact Us</h2>
+        <p>We’re here to assist you with any questions or concerns. Reach out to our support team via email or phone, and we’ll be delighted to help.</p>
+        <form>
+            <input type="text" name="name" placeholder="Your Name" required>
+            <input type="email" name="email" placeholder="Your Email" required>
+            <input type="tel" name="phone" placeholder="Your Phone Number">
+            <textarea name="message" placeholder="Your Message" required></textarea>
+            <button type="submit">Send Message</button>
+        </form>
+    </div>
+
+    <script>
+        function toggleNavbar() {
+            const navbar = document.querySelector('.navbar');
+            navbar.classList.toggle('active');
+        }
+    </script>
+</body>
+</html>

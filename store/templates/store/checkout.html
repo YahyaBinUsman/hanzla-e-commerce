@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout</title>
+    <style>
+        body {
+            background-color: white;
+            color: #0ebab1;
+            font-family: Arial, sans-serif;
+        }
+        .navbar {
+            background-color: white;
+            padding: 1em;
+        }
+        .navbar a {
+            color: #0ebab1;
+            text-decoration: none;
+            margin: 0 1em;
+        }
+        .container {
+            max-width: 800px;
+            margin: 2em auto;
+        }
+        .form-group {
+            margin-bottom: 1em;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5em;
+        }
+        .form-group input, .form-group textarea {
+            width: 100%;
+            padding: 0.5em;
+            border: 1px solid #0ebab1;
+            border-radius: 5px;
+        }
+        .btn {
+            background-color: #0ebab1;
+            color: white;
+            border: none;
+            padding: 0.5em 1em;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+        .readonly-field {
+            background-color: #f0f0f0;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <a href="{% url 'home' %}">Home</a>
+        <a href="{% url 'product_list' category='towel' %}">Towels</a>
+        <a href="{% url 'product_list' category='bedsheet' %}">Bed Sheets</a>
+        <a href="{% url 'product_list' category='ahram' %}">Ahram</a>
+        <a href="{% url 'product_list' category='slipper' %}">Slippers</a>
+        <a href="{% url 'view_cart' %}">View Cart</a>
+    </nav>
+    <div class="container">
+        <h1>Checkout</h1>
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="id_first_name">First Name:</label>
+                <input type="text" name="first_name" id="id_first_name" required>
+            </div>
+            <div class="form-group">
+                <label for="id_last_name">Last Name:</label>
+                <input type="text" name="last_name" id="id_last_name" required>
+            </div>
+            <div class="form-group">
+                <label for="id_email">Email:</label>
+                <input type="email" name="email" id="id_email" required>
+            </div>
+            <div class="form-group">
+                <label for="id_phone">Phone:</label>
+                <input type="text" name="phone" id="id_phone" required>
+            </div>
+            <div class="form-group">
+                <label for="id_address">Address:</label>
+                <textarea name="address" id="id_address" rows="4" required></textarea>
+            </div>
+            <div class="form-group">
+                <label for="id_city">City:</label>
+                <input type="text" name="city" id="id_city" required>
+            </div>
+            <div class="form-group">
+                <label for="id_postal_code">Postal Code:</label>
+                <input type="text" name="postal_code" id="id_postal_code" required>
+            </div>
+            <div class="form-group">
+                <label for="id_payment_method">Payment Method:</label>
+                <input type="text" name="payment_method" id="id_payment_method" value="Cash on Delivery" class="readonly-field" readonly>
+            </div>
+            <div class="form-group">
+                <label for="id_country">Country:</label>
+                <input type="text" name="country" id="id_country" value="Pakistan" class="readonly-field" readonly>
+            </div>
+            <button type="submit" class="btn">Place Order</button>
+        </form>
+    </div>
+</body>
+</html>
