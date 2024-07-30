@@ -84,34 +84,29 @@ def checkout(request):
     if request.method == 'POST':
         form = CheckoutForm(request.POST)
         if form.is_valid():
-            # Create and save the Order instance first
             order = form.save(commit=False)
             cart_items = CartItem.objects.all()
             products_info = ', '.join([f"{item.product.name} ({item.quantity})" for item in cart_items])
             order.products = products_info
             
-            # Calculate total price
             subtotal = sum([item.product.price * item.quantity for item in cart_items])
-            tax = subtotal * Decimal('0.17')  # 17% tax
+            tax = subtotal * Decimal('0.17')
             total_price = subtotal + tax
             order.total_price = total_price
-            
-            # Save order first to get ID
             order.save()
             
-            # Add cart items to the order
             for item in cart_items:
                 order.cart_items.add(item)
 
-            # Calculate delivery date
             if cart_items.exists():
                 max_delivery_time = max([item.product.delivery_time for item in cart_items])
                 order.delivery_date = order.order_date + timedelta(days=max_delivery_time)
-                order.save()  # Save the order again with delivery date
+                order.save()
 
-            # Send email
-            email_subject = 'New Order Confirmation'
+            # Send confirmation email to customer
+            email_subject = 'Order Confirmation'
             email_body = (
+                f'Thank you for your order!\n\n'
                 f'Order details:\n\n'
                 f'First Name: {order.first_name}\n'
                 f'Last Name: {order.last_name}\n'
@@ -133,21 +128,26 @@ def checkout(request):
                 email_subject,
                 email_body,
                 'from@example.com',
+                [order.email],
+                fail_silently=False,
+            )
+
+            # Send email to admin
+            admin_email_subject = 'New Order Confirmation'
+            send_mail(
+                admin_email_subject,
+                email_body,
+                'from@example.com',
                 ['yahyabinusman7@gmail.com'],
                 fail_silently=False,
             )
 
-            # Clear cart
             cart_items.delete()
-
             return redirect('order_confirmation')
     else:
         form = CheckoutForm(initial={'payment_method': 'Cash on Delivery', 'country': 'Pakistan'})
 
     return render(request, 'store/checkout.html', {'form': form})
-
-
-
 
 def order_confirmation(request):
     return render(request, 'store/order_confirmation.html')
@@ -158,3 +158,40 @@ from .models import Order
 def order_details(request):
     orders = Order.objects.all()
     return render(request, 'store/order_details.html', {'orders': orders})
+
+
+def review_page(request):
+    return render(request, 'store/review_page.html')
+
+from django.http import JsonResponse
+from datetime import date
+from .models import Order
+from django.core.mail import send_mail
+
+def check_delivery_dates(request):
+    today = date.today()
+    orders = Order.objects.filter(delivery_date__lt=today, review_email_sent=False)
+
+    email_sent = False
+    for order in orders:
+        email_subject = 'Delivery Confirmation'
+        review_url = request.build_absolute_uri('/review/')
+        home_url = request.build_absolute_uri('/')
+        email_body = (
+            f'Hello {order.first_name},\n\n'
+            f'We hope you have received your order #{order.id}.\n'
+            f'If yes, please leave a review here: {review_url}\n'
+            f'If no, please contact us: {home_url}'
+        )
+        send_mail(
+            email_subject,
+            email_body,
+            'from@example.com',
+            [order.email],
+            fail_silently=False,
+        )
+        order.review_email_sent = True
+        order.save()
+        email_sent = True
+
+    return JsonResponse({'email_sent': email_sent})

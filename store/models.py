@@ -69,6 +69,8 @@ class Order(models.Model):
     delivery_date = models.DateField(null=True, blank=True)
     cart_items = models.ManyToManyField(CartItem)
     total_price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    review_email_sent = models.BooleanField(default=False)
+
 
     def __str__(self):
         return f"Order {self.id} by {self.first_name} {self.last_name}"

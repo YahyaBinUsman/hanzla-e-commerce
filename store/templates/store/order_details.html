@@ -87,5 +87,20 @@
             </tbody>
         </table>
     </div>
+
+    <script>
+        function checkDeliveryDates() {
+            fetch("{% url 'check_delivery_dates' %}")
+                .then(response => response.json())
+                .then(data => {
+                    if (data.email_sent) {
+                        console.log("Emails sent to customers with past delivery dates.");
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+        }
+
+        setInterval(checkDeliveryDates, 5000);
+    </script>
 </body>
 </html>
