@@ -2,9 +2,7 @@ from django.db import models
 from datetime import timedelta
 from django.db import models
 from datetime import timedelta
-
-from django.db import models
-from datetime import timedelta
+from django.utils import timezone
 
 class Product(models.Model):
     CATEGORY_CHOICES = [
@@ -20,6 +18,13 @@ class Product(models.Model):
     price = models.DecimalField(max_digits=10, decimal_places=2)
     quantity = models.PositiveIntegerField(default=0)
     delivery_time = models.PositiveIntegerField(help_text="Delivery time in days")
+    average_rating = models.DecimalField(max_digits=3, decimal_places=2, default=0.00)
+
+    def update_average_rating(self):
+        reviews = self.reviews.all()
+        if reviews:
+            self.average_rating = reviews.aggregate(models.Avg('rating'))['rating__avg']
+            self.save()
 
     def update_quantity(self, quantity_change):
         self.quantity = models.F('quantity') + quantity_change
@@ -53,6 +58,10 @@ from django.db import models
 from datetime import timedelta
 from django.db import models
 from datetime import timedelta
+import uuid
+
+from django.utils import timezone
+import uuid
 
 class Order(models.Model):
     first_name = models.CharField(max_length=100)
@@ -69,9 +78,22 @@ class Order(models.Model):
     delivery_date = models.DateField(null=True, blank=True)
     cart_items = models.ManyToManyField(CartItem)
     total_price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    created_at = models.DateTimeField(default=timezone.now)
+    review_token = models.UUIDField(default=uuid.uuid4)
     review_email_sent = models.BooleanField(default=False)
-
 
     def __str__(self):
         return f"Order {self.id} by {self.first_name} {self.last_name}"
 
+
+class OrderItem(models.Model):
+    order = models.ForeignKey(Order, related_name='items', on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, related_name='order_items', on_delete=models.CASCADE)
+    quantity = models.IntegerField()
+
+class Review(models.Model):
+    product = models.ForeignKey(Product, related_name='reviews', on_delete=models.CASCADE)
+    name = models.CharField(max_length=100)
+    description = models.TextField()
+    rating = models.IntegerField(default=0)
+    created_at = models.DateTimeField(auto_now_add=True)

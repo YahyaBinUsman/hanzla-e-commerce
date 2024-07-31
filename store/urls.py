@@ -12,8 +12,6 @@ urlpatterns = [
     path('order_details/', views.order_details, name='order_details'),
     path('review/', views.review_page, name='review_page'),
     path('check_delivery_dates/', views.check_delivery_dates, name='check_delivery_dates'),
-
-
-
+    path('testimonials/', views.testimonials, name='testimonials'),
 
 ]

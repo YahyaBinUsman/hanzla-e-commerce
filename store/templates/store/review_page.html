@@ -2,10 +2,102 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Review Page</title>
+    <style>
+        body {
+            background-color: white;
+            color: #0ebab1;
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            max-width: 800px;
+            margin: 2em auto;
+        }
+        .product-card {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 1em;
+            margin-bottom: 1em;
+            display: flex;
+            flex-direction: column;
+            gap: 1em;
+        }
+        .star-rating {
+            display: flex;
+            flex-direction: row-reverse;
+            justify-content: flex-end;
+        }
+        .star-rating input[type="radio"] {
+            display: none;
+        }
+        .star-rating label {
+            color: #ddd;
+            font-size: 2em;
+            padding: 0 0.1em;
+            cursor: pointer;
+        }
+        .star-rating input[type="radio"]:checked ~ label {
+            color: #ffc700;
+        }
+        .star-rating label:hover,
+        .star-rating label:hover ~ label {
+            color: #ffc700;
+        }
+        .review-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1em;
+        }
+    </style>
 </head>
 <body>
-    <h1>Leave a Review</h1>
-    <p>This is a simple review page.</p>
+    <div class="container">
+        <h1>Leave a Review</h1>
+        <form method="post" class="review-form" id="review-form">
+            {% csrf_token %}
+            <div id="products-container">
+                {% for product in products %}
+                    <div class="product-card">
+                        <h2>{{ product.name }}</h2>
+                        <p>{{ product.description }}</p>
+                        <div class="star-rating">
+                            <input type="radio" name="rating_{{ product.id }}" id="5-stars-{{ product.id }}" value="5"><label for="5-stars-{{ product.id }}">★</label>
+                            <input type="radio" name="rating_{{ product.id }}" id="4-stars-{{ product.id }}" value="4"><label for="4-stars-{{ product.id }}">★</label>
+                            <input type="radio" name="rating_{{ product.id }}" id="3-stars-{{ product.id }}" value="3"><label for="3-stars-{{ product.id }}">★</label>
+                            <input type="radio" name="rating_{{ product.id }}" id="2-stars-{{ product.id }}" value="2"><label for="2-stars-{{ product.id }}">★</label>
+                            <input type="radio" name="rating_{{ product.id }}" id="1-star-{{ product.id }}" value="1"><label for="1-star-{{ product.id }}">★</label>
+                        </div>
+                        <label for="name_{{ product.id }}">Name:</label>
+                        <input type="text" name="name_{{ product.id }}" id="name_{{ product.id }}" required>
+                        <label for="description_{{ product.id }}">Description:</label>
+                        <textarea name="description_{{ product.id }}" id="description_{{ product.id }}" required></textarea>
+                    </div>
+                {% endfor %}
+            </div>
+            <button type="button" onclick="calculateRatings()">Calculate Average Ratings</button>
+            <div id="average-ratings"></div>
+            <button type="submit">Submit Reviews</button>
+        </form>
+    </div>
+
+    <script>
+        function calculateRatings() {
+            let ratings = {};
+            document.querySelectorAll('.product-card').forEach(card => {
+                let productId = card.querySelector('.star-rating input[type="radio"]').id.split('-')[2];
+                let selectedRating = card.querySelector('.star-rating input[type="radio"]:checked');
+                if (selectedRating) {
+                    ratings[productId] = selectedRating.value;
+                }
+            });
+
+            let averageRatingsDiv = document.getElementById('average-ratings');
+            averageRatingsDiv.innerHTML = '';
+            for (const [productId, rating] of Object.entries(ratings)) {
+                averageRatingsDiv.innerHTML += `<p>Product ID ${productId}: Average Rating = ${rating}</p>`;
+            }
+        }
+    </script>
 </body>
 </html>

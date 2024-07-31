@@ -6,34 +6,73 @@
     <title>Order Details</title>
     <style>
         body {
-            background-color: white;
-            color: #0ebab1;
-            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
         }
         .navbar {
-            background-color: white;
+            background-color: #0ebab1;
             padding: 1em;
+            display: flex;
+            justify-content: center;
+            gap: 1em;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
         .navbar a {
-            color: #0ebab1;
+            color: white;
             text-decoration: none;
-            margin: 0 1em;
+            font-weight: bold;
+            transition: color 0.3s ease;
+        }
+        .navbar a:hover {
+            color: #fff;
+            text-decoration: underline;
         }
         .container {
-            max-width: 800px;
+            max-width: 90%;
             margin: 2em auto;
+            padding: 1em;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #0ebab1;
+            margin-bottom: 1em;
+            text-align: center;
         }
         .table {
             width: 100%;
             border-collapse: collapse;
         }
         .table th, .table td {
-            border: 1px solid #0ebab1;
-            padding: 0.5em;
+            border: 1px solid #ddd;
+            padding: 0.75em;
+            text-align: left;
         }
         .table th {
             background-color: #0ebab1;
             color: white;
+        }
+        .table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        .table tr:hover {
+            background-color: #f1f1f1;
+        }
+        .table td:last-child {
+            text-align: right;
+        }
+        @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column;
+                align-items: center;
+            }
+            .navbar a {
+                margin: 0.5em 0;
+            }
         }
     </style>
 </head>
@@ -63,7 +102,7 @@
                     <th>Order Date</th>
                     <th>Products</th>
                     <th>Delivery Date</th>
-                    <th>Total bill</th>
+                    <th>Total Bill</th>
                 </tr>
             </thead>
             <tbody>
@@ -81,7 +120,7 @@
                     <td>{{ order.order_date }}</td>
                     <td>{{ order.products }}</td>
                     <td>{{ order.delivery_date }}</td>
-                    <td>Total: ${{ order.total_price }}</td>
+                    <td>${{ order.total_price }}</td>
                 </tr>
                 {% endfor %}
             </tbody>

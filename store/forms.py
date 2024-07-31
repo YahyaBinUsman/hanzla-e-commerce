@@ -9,3 +9,11 @@ class CheckoutForm(forms.ModelForm):
             'payment_method': forms.HiddenInput(),
             'country': forms.HiddenInput(),
         }
+
+from django import forms
+from .models import Review
+
+class ReviewForm(forms.ModelForm):
+    class Meta:
+        model = Review
+        fields = ['name', 'description', 'rating']

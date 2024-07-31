@@ -2,6 +2,10 @@ import datetime
 from django.core.mail import send_mail
 from .models import Order
 
+import datetime
+from django.core.mail import send_mail
+from .models import Order
+
 class DeliveryCheckMiddleware:
     def __init__(self, get_response):
         self.get_response = get_response
@@ -12,13 +16,14 @@ class DeliveryCheckMiddleware:
 
         for order in orders:
             email_subject = 'Delivery Confirmation'
-            review_url = request.build_absolute_uri('/review/')
+            review_token = order.review_token
+            review_url = request.build_absolute_uri(f'/review/?token={review_token}')
             home_url = request.build_absolute_uri('/')
             email_body = (
                 f'Hello {order.first_name},\n\n'
                 f'We hope you have received your order #{order.id}.\n'
                 f'If yes, please leave a review here: {review_url}\n'
-                f'If no, please contact us: {home_url}'
+                f'If no, please contact us: {home_url}\n\n'
             )
             send_mail(
                 email_subject,

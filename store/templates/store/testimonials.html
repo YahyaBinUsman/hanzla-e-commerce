@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Testimonials</title>
+    <style>
+        body {
+            background-color: white;
+            color: #0ebab1;
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            max-width: 800px;
+            margin: 2em auto;
+        }
+        .review {
+            border-bottom: 1px solid #0ebab1;
+            padding: 1em 0;
+        }
+        .review:last-child {
+            border-bottom: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Customer Testimonials</h1>
+        {% for review in reviews %}
+        <div class="review">
+            <h2>{{ review.product.name }}</h2>
+            <p><strong>{{ review.name }}</strong> ({{ review.rating }} stars):</p>
+            <p>{{ review.description }}</p>
+        </div>
+        {% endfor %}
+    </div>
+</body>
+</html>

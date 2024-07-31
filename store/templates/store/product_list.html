@@ -209,24 +209,31 @@
         <h1 class="text-center">{{ category|title }}</h1>
         <div class="row">
             {% for product in products %}
-                <div class="col-md-4">
-                    <div class="card">
-                        <img src="{{ product.image.url }}" alt="{{ product.name }}">
-                        <div class="card-body">
-                            <h5 class="card-title">{{ product.name }}</h5>
-                            <p class="card-text">{{ product.description }}</p>
-                            <p class="card-text">Price: ${{ product.price }}</p>
-                            <p class="card-text">Quantity: {{ product.quantity }}</p>
-                            <form method="post" action="{% url 'add_to_cart' product.id %}">
-                                {% csrf_token %}
-                                <label for="quantity">Quantity:</label>
-                                <input type="number" name="quantity" id="quantity" value="1" min="1"><br>
-                                <button type="submit" class="btn">Add to Cart</button>
-                            </form>
-                        </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <img src="{{ product.image.url }}" alt="{{ product.name }}">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ product.name }}</h5>
+                        <p class="card-text">{{ product.description }}</p>
+                        <p class="card-text">Price: ${{ product.price }}</p>
+                        <p class="card-text">Quantity: {{ product.quantity }}</p>
+                        <p class="card-text">Average Rating: {{ product.average_rating }}</p>
+                        <ul>
+                            {% for review in product.reviews.all %}
+                                <li>{{ review.name }}: {{ review.rating }} stars - {{ review.description }}</li>
+                            {% endfor %}
+                        </ul>
+                        <form method="post" action="{% url 'add_to_cart' product.id %}">
+                            {% csrf_token %}
+                            <label for="quantity">Quantity:</label>
+                            <input type="number" name="quantity" id="quantity" value="1" min="1"><br>
+                            <button type="submit" class="btn">Add to Cart</button>
+                        </form>
                     </div>
                 </div>
+            </div>
             {% endfor %}
+            
         </div>
         <div class="text-center">
             <a class="btn" href="{% url 'view_cart' %}">View Cart</a>
