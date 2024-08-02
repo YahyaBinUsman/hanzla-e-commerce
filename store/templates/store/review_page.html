@@ -1,3 +1,4 @@
+<!-- review_page.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -58,7 +59,7 @@
             {% csrf_token %}
             <div id="products-container">
                 {% for product in products %}
-                    <div class="product-card">
+                    <div class="product-card" data-product-id="{{ product.id }}">
                         <h2>{{ product.name }}</h2>
                         <p>{{ product.description }}</p>
                         <div class="star-rating">
@@ -68,36 +69,61 @@
                             <input type="radio" name="rating_{{ product.id }}" id="2-stars-{{ product.id }}" value="2"><label for="2-stars-{{ product.id }}">★</label>
                             <input type="radio" name="rating_{{ product.id }}" id="1-star-{{ product.id }}" value="1"><label for="1-star-{{ product.id }}">★</label>
                         </div>
-                        <label for="name_{{ product.id }}">Name:</label>
-                        <input type="text" name="name_{{ product.id }}" id="name_{{ product.id }}" required>
                         <label for="description_{{ product.id }}">Description:</label>
                         <textarea name="description_{{ product.id }}" id="description_{{ product.id }}" required></textarea>
                     </div>
                 {% endfor %}
             </div>
-            <button type="button" onclick="calculateRatings()">Calculate Average Ratings</button>
-            <div id="average-ratings"></div>
+            <h2>Overall Review</h2>
+            <label for="overall_name">Your Name:</label>
+            <input type="text" name="overall_name" id="overall_name" required>
+            <label for="overall_description">Overall Experience:</label>
+            <textarea name="overall_description" id="overall_description" required></textarea>
+            <div class="star-rating">
+                <input type="radio" name="overall_rating" id="5-stars-overall" value="5" required><label for="5-stars-overall">★</label>
+                <input type="radio" name="overall_rating" id="4-stars-overall" value="4"><label for="4-stars-overall">★</label>
+                <input type="radio" name="overall_rating" id="3-stars-overall" value="3"><label for="3-stars-overall">★</label>
+                <input type="radio" name="overall_rating" id="2-stars-overall" value="2"><label for="2-stars-overall">★</label>
+                <input type="radio" name="overall_rating" id="1-star-overall" value="1"><label for="1-star-overall">★</label>
+            </div>
+            <p>Combined Average Rating: <span id="combined-rating">0</span> stars</p>
             <button type="submit">Submit Reviews</button>
         </form>
     </div>
-
     <script>
-        function calculateRatings() {
-            let ratings = {};
-            document.querySelectorAll('.product-card').forEach(card => {
-                let productId = card.querySelector('.star-rating input[type="radio"]').id.split('-')[2];
-                let selectedRating = card.querySelector('.star-rating input[type="radio"]:checked');
-                if (selectedRating) {
-                    ratings[productId] = selectedRating.value;
-                }
+        document.addEventListener('DOMContentLoaded', () => {
+            const productRatings = {};
+
+            const updateCombinedRating = () => {
+                let totalRating = 0;
+                let count = 0;
+                document.querySelectorAll('.product-card').forEach(card => {
+                    const productId = card.getAttribute('data-product-id');
+                    const rating = document.querySelector(`input[name="rating_${productId}"]:checked`);
+                    if (rating) {
+                        totalRating += parseFloat(rating.value);
+                        count += 1;
+                    }
+                });
+
+                const averageProductRating = count > 0 ? totalRating / count : 0;
+                const overallRating = document.querySelector('input[name="overall_rating"]:checked');
+                const combinedRating = overallRating ? (averageProductRating + parseFloat(overallRating.value)) / 2 : averageProductRating;
+
+                document.getElementById('combined-rating').textContent = combinedRating.toFixed(1);
+            };
+
+            document.querySelectorAll('input[name^="rating_"]').forEach(input => {
+                input.addEventListener('change', updateCombinedRating);
             });
 
-            let averageRatingsDiv = document.getElementById('average-ratings');
-            averageRatingsDiv.innerHTML = '';
-            for (const [productId, rating] of Object.entries(ratings)) {
-                averageRatingsDiv.innerHTML += `<p>Product ID ${productId}: Average Rating = ${rating}</p>`;
-            }
-        }
+            document.querySelectorAll('input[name="overall_rating"]').forEach(input => {
+                input.addEventListener('change', updateCombinedRating);
+            });
+
+            // Initialize the combined rating on page load
+            updateCombinedRating();
+        });
     </script>
 </body>
 </html>

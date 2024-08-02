@@ -62,7 +62,6 @@ import uuid
 
 from django.utils import timezone
 import uuid
-
 class Order(models.Model):
     first_name = models.CharField(max_length=100)
     last_name = models.CharField(max_length=100)
@@ -81,15 +80,10 @@ class Order(models.Model):
     created_at = models.DateTimeField(default=timezone.now)
     review_token = models.UUIDField(default=uuid.uuid4)
     review_email_sent = models.BooleanField(default=False)
+    reviewed = models.BooleanField(default=False)
 
     def __str__(self):
         return f"Order {self.id} by {self.first_name} {self.last_name}"
-
-
-class OrderItem(models.Model):
-    order = models.ForeignKey(Order, related_name='items', on_delete=models.CASCADE)
-    product = models.ForeignKey(Product, related_name='order_items', on_delete=models.CASCADE)
-    quantity = models.IntegerField()
 
 class Review(models.Model):
     product = models.ForeignKey(Product, related_name='reviews', on_delete=models.CASCADE)
@@ -97,3 +91,14 @@ class Review(models.Model):
     description = models.TextField()
     rating = models.IntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
+
+class ClientReview(models.Model):
+    name = models.CharField(max_length=100)
+    description = models.TextField()
+    rating = models.DecimalField(max_digits=3, decimal_places=2)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+class OrderItem(models.Model):
+    order = models.ForeignKey(Order, related_name='items', on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, related_name='order_items', on_delete=models.CASCADE)
+    quantity = models.IntegerField()

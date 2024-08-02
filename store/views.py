@@ -5,6 +5,7 @@ from datetime import date, timedelta, datetime
 from decimal import Decimal
 from .models import Product, CartItem, Order, Review
 from .forms import CheckoutForm, ReviewForm
+from store import models
 
 # Home page view
 def home(request):
@@ -123,9 +124,27 @@ def checkout(request):
 
             # Send email to admin
             admin_email_subject = 'A new order has been placed'
+            email_body1 = (
+                f'Order details:\n\n'
+                f'First Name: {order.first_name}\n'
+                f'Last Name: {order.last_name}\n'
+                f'Email: {order.email}\n'
+                f'Phone: {order.phone}\n'
+                f'Address: {order.address}\n'
+                f'City: {order.city}\n'
+                f'Postal Code: {order.postal_code}\n'
+                f'Payment Method: {order.payment_method}\n'
+                f'Country: {order.country}\n'
+                f'Order Date: {order.order_date}\n'
+                f'Delivery Date: {order.delivery_date}\n'
+                f'Subtotal: ${subtotal}\n'
+                f'Tax (17%): ${tax}\n'
+                f'Total Price (After Tax): ${order.total_price}\n\n'
+                f'Products:\n{order.products}\n\n'
+            )
             send_mail(
                 admin_email_subject,
-                email_body,
+                email_body1,
                 'from@example.com',
                 ['yahyabinusman7@gmail.com'],
                 fail_silently=False,
@@ -148,28 +167,6 @@ def check_delivery_dates(request):
 
     email_sent = False
     for order in orders:
-        # Retrieve the review token directly from the order
-        review_token = order.review_token
-        review_url = request.build_absolute_uri(f'/review/?token={review_token}')
-        home_url = request.build_absolute_uri('/')
-        
-        email_subject = 'Delivery Confirmation'
-        email_body = (
-            f'Hello {order.first_name},\n\n'
-            f'Your review token:\n'
-            f'We hope you have received your order #{order.id}.\n'
-            f'If yes, please leave a review here: {review_url}\n'
-            f'If no, please contact us: {home_url}\n\n'
-            f'Your review token: {review_token}\n'
-            f'Your review token:\n'
-        )
-        send_mail(
-            email_subject,
-            email_body,
-            'from@example.com',
-            [order.email],
-            fail_silently=False,
-        )
         order.review_email_sent = True
         order.save()
         email_sent = True
@@ -183,53 +180,84 @@ def order_confirmation(request):
 def order_details(request):
     orders = Order.objects.all()
     return render(request, 'store/order_details.html', {'orders': orders})
+from django.shortcuts import render, get_object_or_404, redirect
+from django.http import HttpResponseBadRequest
+from decimal import Decimal
+from .models import Product, Review, ClientReview, Order
 
 def review_page(request):
     token = request.GET.get('token')
-    print(f"Token received: {token}")
-    
+
     if not token:
         return HttpResponseBadRequest("Token is missing")
 
     try:
         order = Order.objects.get(review_token=token)
-        print(f"Order found: {order}")
     except Order.DoesNotExist:
         return HttpResponseBadRequest("Invalid token")
 
-    product_names = [item.split(' (')[0] for item in order.products.split(', ')]
-    print(f"Product names extracted: {product_names}")
+    if order.reviewed:
+        return render(request, 'store/review_submitted.html')  # A page indicating review is already submitted.
 
+    product_names = [item.split(' (')[0] for item in order.products.split(', ')]
     products = Product.objects.filter(name__in=product_names)
-    print(f"Products retrieved: {products}")
 
     if request.method == 'POST':
-        # Process individual product ratings
-        ratings = {product_id: request.POST.get(f'rating_{product_id}') for product_id in products.values_list('id', flat=True)}
-        print(f"Ratings received: {ratings}")
+        overall_rating = request.POST.get('overall_rating')
+        overall_name = request.POST.get('overall_name')
+        overall_description = request.POST.get('overall_description')
 
-        for product_id, rating in ratings.items():
-            if rating:
-                product = get_object_or_404(Product, id=product_id)
-                review = Review(product=product, name=request.POST.get(f'name_{product_id}'), description=request.POST.get(f'description_{product_id}'), rating=rating)
+        if not overall_rating or not overall_name or not overall_description:
+            return HttpResponseBadRequest("All fields are required")
+
+        overall_rating = Decimal(overall_rating)
+        total_product_ratings = 0
+        count_product_ratings = 0
+
+        for product in products:
+            rating = request.POST.get(f'rating_{product.id}')
+            description = request.POST.get(f'description_{product.id}')
+            if rating and description:
+                review = Review(product=product, name=overall_name, description=description, rating=Decimal(rating))
                 review.save()
                 product.update_average_rating()
+                total_product_ratings += Decimal(rating)
+                count_product_ratings += 1
 
-        # Update testimonials page or perform other actions
-        return redirect('review_page')  # Redirect to the same page after saving the review
+        average_product_rating = (total_product_ratings / count_product_ratings) if count_product_ratings else 0
+        combined_rating = (average_product_rating + overall_rating) / 2 if count_product_ratings else overall_rating
+
+        ClientReview.objects.create(name=overall_name, description=overall_description, rating=combined_rating)
+
+        order.reviewed = True
+        order.save()
+
+        return redirect('home')
+
+    return render(request, 'store/review_page.html', {
+        'products': products,
+        'product_ratings_average': 0,  # Not displaying this because it's for the current user's input
+        'combined_rating': 0  # Not displaying this because it's for the current user's input
+    })
+
+from django.shortcuts import render
+from .models import ClientReview
+
+def testimonials(request):
+    reviews = ClientReview.objects.all()
+    if reviews:
+        combined_average_rating = sum(review.rating for review in reviews) / len(reviews)
     else:
-        form = ReviewForm()
-        print(f"Review form initialized: {form}")
+        combined_average_rating = 0
 
-    return render(request, 'store/review_page.html', {'products': products})
-
+    return render(request, 'store/testimonials.html', {
+        'reviews': reviews,
+        'combined_average_rating': combined_average_rating
+    })
 
 # Product list page
 def product_list(request, category):
     products = Product.objects.filter(category=category)
     return render(request, 'store/product_list.html', {'products': products, 'category': category})
 
-# Testimonials page
-def testimonials(request):
-    reviews = Review.objects.all()
-    return render(request, 'store/testimonials.html', {'reviews': reviews})
+
