@@ -16,6 +16,10 @@ def home(request):
     five_star_reviews = ClientReview.objects.filter(rating=5.0)
     return render(request, 'store/home.html', {'five_star_reviews': five_star_reviews})
 
+def about_us(request):
+    return render(request, 'store/about_us.html')
+
+
 def contact(request):
     if request.method == 'POST':
         name = request.POST.get('name')
@@ -72,13 +76,15 @@ def remove_from_cart(request, item_id):
         item.delete()
     return redirect('view_cart')
 
-# Add item to cart
+from django.shortcuts import get_object_or_404, redirect
+from django.contrib import messages
+from .models import Product, CartItem
+
 def add_to_cart(request, product_id):
     product = get_object_or_404(Product, id=product_id)
     quantity = int(request.POST.get('quantity', 1))
 
     if product.quantity < quantity:
-        # Handle case where requested quantity exceeds available quantity
         return redirect('product_list', category=product.category)
 
     cart_item, created = CartItem.objects.get_or_create(product=product)
@@ -88,9 +94,14 @@ def add_to_cart(request, product_id):
         cart_item.quantity += quantity
     cart_item.save()
 
-    product.update_quantity(-quantity)  # Deduct product quantity in inventory
+    product.update_quantity(-quantity)
+    
+    # Add success message with product name and quantity
+    messages.success(request, f'{quantity} x {product.name} has been added to your cart! Go check your cart.')
 
-    return redirect('view_cart')
+    return redirect(request.META.get('HTTP_REFERER', 'home'))
+
+
 
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponseBadRequest, JsonResponse

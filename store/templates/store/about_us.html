@@ -1,0 +1,322 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- basic -->
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- mobile metas -->
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="initial-scale=1, maximum-scale=1">
+<!-- site metas -->
+<title>About</title>
+<meta name="keywords" content="">
+<meta name="description" content="">
+<meta name="author" content=""> 
+<!-- bootstrap css -->
+<link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.min.css' %}">
+<!-- style css -->
+<link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
+<!-- Responsive-->
+<link rel="stylesheet" href="{% static 'css/responsive.css' %}">
+<!-- fevicon -->
+<link rel="icon" href="{% static 'images/fevicon.png' %}" type="image/gif" />
+<!-- Scrollbar Custom CSS -->
+<link rel="stylesheet" href="{% static 'css/jquery.mCustomScrollbar.min.css' %}">
+<!-- Tweaks for older IEs-->
+<link rel="stylesheet" href="https://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css">
+<!-- owl stylesheets --> 
+<link rel="stylesheet" href="{% static 'css/owl.carousel.min.css' %}">
+<link rel="stylesheet" href="{% static 'css/owl.theme.default.min.css' %}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.css" media="screen">
+<style>
+  .services-section {
+    padding: 60px 0;
+  }
+  .service-card {
+    background: linear-gradient(to right bottom, #536976, #292e49);
+    border-radius: 20px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    padding: 30px;
+    margin-bottom: 30px;
+    text-align: center;
+    transition: transform 0.3s, box-shadow 0.3s;
+    max-width: 300px;
+    margin: 0 auto 30px auto;
+    height: auto;
+  }
+
+  .service-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+  }
+
+  .service-icon {
+    margin-bottom: 20px;
+  }
+
+  .service-icon i {
+    font-size: 3rem;
+    color: #ffffff;
+  }
+
+  .service-card h3 {
+    font-size: 26px;
+    color: #ffffff;
+    margin-bottom: 20px;
+  }
+
+  .price-text {
+    font-size: 20px;
+    color: #ffffff;
+    margin-bottom: 15px;
+  }
+
+  .points-section ul {
+    padding: 0;
+    margin: 20px 0;
+  }
+
+  .points-section li {
+    font-size: 18px;
+    color: #000000;
+    margin-bottom: 10px;
+  }
+
+  .subscribe-btn {
+    background-color: #ff6b6b;
+    color: #ffffff;
+    border: none;
+    border-radius: 30px;
+    padding: 12px 40px;
+    font-size: 18px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+
+  .subscribe-btn:hover {
+    background-color: #ff5252;
+  }
+  
+  .btn-main a {
+    background-color: #ff6b6b;
+    color: #ffffff;
+    border: none;
+    border-radius: 30px;
+    padding: 12px 40px;
+    font-size: 18px;
+    text-decoration: none;
+    display: inline-block;
+    transition: background-color 0.3s;
+  }
+
+  .btn-main a:hover {
+    background-color: #ff5252;
+  }
+  .send_bt  {
+    width: 100%;
+    float: left;
+    font-size: 20px;
+    color: #ffffff;
+    text-align: center;
+    background-color: #ff5a58;
+    padding: 10px 0px;
+    text-transform: uppercase;
+    border-radius: 30px;
+}
+</style>
+</head>
+<body>
+  <!--header section start -->
+  <div class="header_section">
+    <div class="header_left">
+      <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="logo"><a href="/"><img src="{% static 'images/logo.png' %}"></a></div>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav mr-auto">
+            <li class="nav-item"><a class="nav-link" href="{% url 'home' %}">Home</a></li>
+            <li class="nav-item"><a class="nav-link" href="{% url 'product_list' category='towel' %}">Towels</a></li>
+            <li class="nav-item"><a class="nav-link" href="{% url 'product_list' category='bedsheet' %}">Bed Sheets</a></li>
+            <li class="nav-item"><a class="nav-link" href="{% url 'product_list' category='ahram' %}">Ahram</a></li>
+            <li class="nav-item"><a class="nav-link" href="{% url 'product_list' category='slipper' %}">Slippers</a></li>
+            <li class="nav-item"><a class="nav-link" href="{% url 'view_cart' %}">View Cart</a></li>
+          </ul>
+        </div>
+      </nav>
+      <div class="banner_main">
+        <h1 class="banner_taital">Welcome to Our <br>TOUHEED E-commerce Store</h1>
+        <p class="banner_text">Discover premium products and exclusive offers, tailored just for you. Shop now and experience unparalleled quality and service.</p>
+        <div class="btn-main">
+          <a href="{% url 'product_list' category='towel' %}">Shop Now</a>
+        </div>
+      </div>
+    </div>
+    <div class="header_right">
+      <img src="{% static 'images/banner-img.png' %}" class="banner_img">
+    </div>
+  </div>
+  <!--header section end -->
+ 
+  <!--about section start -->
+  <div class="services_section layout_padding">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <h1 class="services_taital">Welcome to TOUHEED E-commerce Store</h1>
+          <p class="services_text">At TOUHEED, we offer a diverse range of high-quality products to meet all your needs. From luxurious towels to cozy bed sheets and stylish slippers, our online store provides a seamless shopping experience with exceptional customer service.</p>
+          <p class="services_text">Our mission is to provide you with top-notch products that enhance your lifestyle and Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptates impedit quo reiciendis. Officiis praesentium blanditiis minus molestiae repellendus voluptatum nisi odit fuga ipsa quos repellat illum officia, iste facere aspernatur, ratione iure, recusandae perferendis quas! Ullam minima sequi quam impedit debitis vitae, expedita labore necessitatibus aliquid aperiam hic nam, maxime itaque laboriosam animi sint vero possimus dolor ducimus. Error aperiam sunt quidem, fuga suscipit numquam ratione iure aut, commodi, ipsa nam nisi reiciendis? Sint ex impedit perspiciatis eius nemo hic pariatur! Quidem tempore ea voluptas voluptate eum, porro in, nobis modi incidunt animi aut unde. Eligendi nemo magni alias facere?. Shop with us and enjoy:</p>
+          <ul class="points-section">
+            <li>Collections curated just for you</li>
+            <li>Easy-to-navigate online store</li>
+            <li>Secure and swift delivery</li>
+            <li>Excellent customer support</li>
+            <li>And much more!</li>
+          </ul>
+        </div>
+        <div class="services_section layout_padding">
+            <div class="container">
+              <h1 class="what_taital">Our Categories</h1>
+              <p class="what_text">Explore our diverse range of products designed to meet your needs.</p>
+              <div class="what_we_do_section_2">
+                <div class="row">
+                  <div class="col-lg-3 col-md-6">
+                    <div class="service-card">
+                      <div class="service-icon">
+                        <i class="fa fa-socks" aria-hidden="true"></i> <!-- Font Awesome icon for slippers -->
+                      </div>
+                      <h3>Slippers</h3>
+                      <p class="price-text">Comfortable and stylish slippers for all occasions.</p>
+                      <button class="subscribe-btn" onclick="window.location.href='/slippers'">Shop Now</button>
+                    </div>
+                  </div>
+                  <div class="col-lg-3 col-md-6">
+                    <div class="service-card">
+                      <div class="service-icon">
+                        <i class="fa fa-bed" aria-hidden="true"></i> <!-- Font Awesome icon for bedsheets -->
+                      </div>
+                      <h3>Bedsheets</h3>
+                      <p class="price-text">Premium bedsheets for a perfect night's sleep.</p>
+                      <button class="subscribe-btn" onclick="window.location.href='/bedsheets'">Shop Now</button>
+                    </div>
+                  </div>
+                  <div class="col-lg-3 col-md-6">
+                    <div class="service-card">
+                      <div class="service-icon">
+                        <i class="fa fa-tshirt" aria-hidden="true"></i> <!-- Font Awesome icon for ahram -->
+                      </div>
+                      <h3>Ahram</h3>
+                      <p class="price-text">Elegant ahram for traditional and cultural events.</p>
+                      <button class="subscribe-btn" onclick="window.location.href='/ahrams'">Shop Now</button>
+                    </div>
+                  </div>
+                  <div class="col-lg-3 col-md-6">
+                    <div class="service-card">
+                      <div class="service-icon">
+                        <i class="fa fa-towel" aria-hidden="true"></i> <!-- Font Awesome icon for towels -->
+                      </div>
+                      <h3>Towels</h3>
+                      <p class="price-text">Soft and absorbent towels for everyday use.</p>
+                      <button class="subscribe-btn" onclick="window.location.href='/towels'">Shop Now</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+        </div>
+
+      </div>
+    </div>
+  <!--about section end -->
+  <h1 class="what_taital">Contact us</h1>
+    <p class="amet_text">amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore </p>
+    <div class="contact_section2">
+      <div class="row">
+        <div class="col-md-6 padding_left_0">
+          <!-- Add this form section to your existing HTML template -->
+          <div class="mail_section">
+            <form method="post" action="{% url 'contact' %}">
+              {% csrf_token %}
+              <input type="text" class="mail_text_1" placeholder="Name" name="name">
+              <input type="text" class="mail_text_1" placeholder="Phone Number" name="phone_number">
+              <input type="email" class="mail_text_1" placeholder="Email" name="email">
+              <textarea class="massage_text" placeholder="Message" rows="5" id="message" name="message"></textarea>
+              <button type="submit" class="send_bt">Send</button>
+            </form>
+          </div>
+          
+
+        </div>
+        <div class="col-md-6 padding_0">
+          <div class="map-responsive">
+            <iframe src="https://www.google.com/maps/embed/v1/place?key=AIzaSyA0s1a7phLN0iaD6-UE7m4qP-z21pH0eSc&amp;q=Plot+11,+Block+E+Pia+Housing+Scheme,+Lahore,+Punjab+54770,+Pakistan/@31.4475933,74.2795881,21z/data=!4m6!3m5!1s0x3919016c4b9f0f21:0x694fa2e3f3774c5!8m2!3d31.4475887!4d74.279749!16s%2Fg%2F11f3j7nwtv?entry=ttu" width="600" height="400" frameborder="0" style="border:0; width: 100%;" allowfullscreen=""></iframe>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="footer_section layout_padding">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-3 col-sm-6">
+        <h4 class="about_text">About Touheed</h4>
+        <div class="location_text"><img src="{% static 'images/map-icon.png' %}"><span class="padding_left_15">Locations</span></div>
+        <div class="location_text"><img src="{% static 'images/call-icon.png' %}"><span class="padding_left_15">+01 9876543210</span></div>
+        <div class="location_text"><img src="{% static 'images/mail-icon.png' %}"><span class="padding_left_15">demo@gmail.com</span></div>
+      </div>
+      <div class="col-lg-3 col-sm-6">
+        <h4 class="about_text">About Touheed</h4>
+        <p class="dolor_text">ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt</p>
+      </div>
+      <div class="col-lg-3 col-sm-6">
+        <h4 class="about_text">Instagram</h4>
+        <div class="footer_images">
+          <div class="footer_images_left">
+            <div class="image_12"><img src="{% static 'images/img-12.png' %}"></div>
+            <div class="image_12"><img src="{% static 'images/img-12.png' %}"></div>
+            <div class="image_12"><img src="{% static 'images/img-12.png' %}"></div>
+          </div>
+          <div class="footer_images_right">
+            <div class="image_12"><img src="{% static 'images/img-12.png' %}"></div>
+            <div class="image_12"><img src="{% static 'images/img-12.png' %}"></div>
+            <div class="image_12"><img src="{% static 'images/img-12.png' %}"></div>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-3 col-sm-6">
+        <h4 class="about_text">Newsletter</h4>
+        <input type="text" class="mail_text" placeholder="Enter your email" name="Enter your email">
+        <div class="subscribe_bt"><a href="#">Subscribe</a></div>
+        <div class="footer_social_icon">
+          <ul>
+            <li><a href="#"><img src="{% static 'images/fb-icon1.png' %}"></a></li>
+             <li><a href="#"><img src="{% static 'images/twitter-icon1.png' %}"></a></li>
+            <li><a href="#"><img src="{% static 'images/linkedin-icon1.png' %}"></a></li>
+            <li><a href="#"><img src="{% static 'images/youtub-icon1.png' %}"></a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <!-- copyright section start -->
+    <div class="copyright_section">
+                  <div class="copyright_text">Copyright 2024 All Right Reserved By Touheed</div>
+
+    </div>
+    <!-- copyright section end -->
+  </div>
+</div>
+
+  <!-- Javascript files-->
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js"></script>
+  <script src="{% static 'js/custom.js' %}"></script>
+</body>
+</html>

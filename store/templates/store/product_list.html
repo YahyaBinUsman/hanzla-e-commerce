@@ -116,6 +116,22 @@
             font-size: 1.25rem;
             color: #f39c12; /* Star color */
         }
+            .alert-custom {
+                background-color: #d4edda;
+                color: #155724;
+                border: 1px solid #c3e6cb;
+                border-radius: 5px;
+                padding: 15px;
+                margin: 20px auto;
+                max-width: 500px;
+                text-align: center;
+            }
+            #message-container {
+                position: relative;
+                top: 20px;
+                z-index: 1;
+            }
+        
     </style>
 </head>
 <body>
@@ -140,6 +156,19 @@
             </nav>
         </div>
     </div>
+    <br><br><br>
+    
+    {% if messages %}
+    <div id="message-container">
+        {% for message in messages %}
+            <div class="alert-custom" role="alert">
+                {{ message }}
+            </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+
     <!--header section end -->
 
     <div class="services_section layout_padding">
@@ -233,7 +262,40 @@
         </div>
       </div>
     <!--footer section end -->
-
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(function() {
+                var messageContainer = document.getElementById('message-container');
+                if (messageContainer) {
+                    messageContainer.style.display = 'none';
+                }
+            }, 3000);
+        });
+    </script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('form.add-to-cart-form').on('submit', function(e) {
+                e.preventDefault();
+    
+                $.ajax({
+                    type: $(this).attr('method'),
+                    url: $(this).attr('action'),
+                    data: $(this).serialize(),
+                    success: function(response) {
+                        $('#message-container').html('<div class="alert-custom" role="alert">Product has been added to your cart successfully!</div>');
+                        setTimeout(function() {
+                            $('#message-container').fadeOut('slow');
+                        }, 5000);
+                    },
+                    error: function(response) {
+                        console.log('An error occurred.');
+                    }
+                });
+            });
+        });
+    </script>
+    
     <!-- Javascript files-->
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
