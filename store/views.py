@@ -8,13 +8,32 @@ from .forms import CheckoutForm, ReviewForm
 from store import models
 from django.shortcuts import render
 from .models import ClientReview
+from django.core.mail import send_mail
+from django.shortcuts import render, redirect
+from django.conf import settings
 
-# Home page view
 def home(request):
-    # Fetch 5-star reviews
     five_star_reviews = ClientReview.objects.filter(rating=5.0)
-    
     return render(request, 'store/home.html', {'five_star_reviews': five_star_reviews})
+
+def contact(request):
+    if request.method == 'POST':
+        name = request.POST.get('name')
+        phone_number = request.POST.get('phone_number')
+        email = request.POST.get('email')
+        message = request.POST.get('message')
+
+        # Construct the email content
+        subject = f'New Contact Form Submission from {name}'
+        email_message = f'Name: {name}\nPhone Number: {phone_number}\nEmail: {email}\nMessage: {message}'
+        recipient_list = ['yahyabinusman7@gmail.com']
+
+        # Send the email
+        send_mail(subject, email_message, settings.EMAIL_HOST_USER, recipient_list)
+
+        return redirect('home')  # Redirect to home after successful submission
+
+    return render(request, 'store/contact.html')
 
 # View cart page
 def view_cart(request):
@@ -260,9 +279,18 @@ def review_page(request):
 
 from django.shortcuts import render
 from .models import ClientReview
+from django.shortcuts import render
+from .models import ClientReview
+from django.shortcuts import render
+from .models import ClientReview
 
 def testimonials(request):
     reviews = ClientReview.objects.all()
+    
+    # Round the ratings to the nearest 0.5
+    for review in reviews:
+        review.rating = round(review.rating * 2) / 2
+    
     if reviews:
         combined_average_rating = sum(review.rating for review in reviews) / len(reviews)
     else:
@@ -272,6 +300,7 @@ def testimonials(request):
         'reviews': reviews,
         'combined_average_rating': combined_average_rating
     })
+
 
 from django.db.models import Count, Q
 from .models import Product

@@ -32,65 +32,62 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" media="screen">
 <style>
     /* Testimonial card adjustments */
-   .testimonial-card {
-    background: linear-gradient(135deg, #0ebab1, #050505);
-    border-radius: 20px;
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-    padding: 30px;
-    color: #ffffff;
-    text-align: center;
-    margin-bottom: 30px;
-    transition: transform 0.3s, box-shadow 0.3s;
-    height: 400px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-  }
-
-  .testimonial-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
-  }
-
-  .client_name {
-    font-size: 32px;
-    font-weight: bold;
-    margin-bottom: 15px;
-    color: #000000;
-    text-decoration: underline;
-    font-style: italic;
-    font-family: Georgia, 'Times New Roman', Times, serif;
-  }
-
-
-  .client_text {
-    font-size: 22px;
-    margin-bottom: 20px;
-    line-height: 1.6;
-    color: #ffffff;
-    font-style: italic;
-  }
-
-  .rating {
-    display: flex;
-    justify-content: center; /* Center the stars */
-  }
+    .testimonial-card {
+      background: linear-gradient(135deg, #0ebab1, #050505);
+      border-radius: 20px;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+      padding: 30px;
+      color: #ffffff;
+      text-align: center;
+      margin-bottom: 30px;
+      transition: transform 0.3s, box-shadow 0.3s;
+      height: 400px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
   
-  .rating svg {
-    width: 24px; /* Adjust size as needed */
-    height: 24px; /* Adjust size as needed */
-    fill: #e0e0e0; /* Default color for empty stars */
-    margin: 0 2px; /* Space between stars */
-  }
+    .testimonial-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
+    }
   
-  .rating .full {
-    fill: #ffd700; /* Color for filled stars */
-  }
+    .client_name {
+      font-size: 32px;
+      font-weight: bold;
+      margin-bottom: 15px;
+      color: #000000;
+      text-decoration: underline;
+      font-style: italic;
+      font-family: Georgia, 'Times New Roman', Times, serif;
+    }
   
-  .rating .half {
-    fill: #ffd700; /* Color for half stars */
-  }
+    .client_text {
+      font-size: 22px;
+      margin-bottom: 20px;
+      line-height: 1.6;
+      color: #ffffff;
+      font-style: italic;
+    }
   
+    .rating {
+      display: flex;
+      justify-content: center; /* Center the stars */
+    }
+    
+    .rating i {
+      font-size: 24px; /* Adjust size as needed */
+      color: #e0e0e0; /* Default color for empty stars */
+      margin: 0 2px; /* Space between stars */
+    }
+    
+    .rating .fa-star {
+      color: #ffd700; /* Color for filled stars */
+    }
+    
+    .rating .fa-star-half-alt {
+      color: #ffd900; /* Color for half stars */
+    }
   </style>
 </head>
 <body>
@@ -100,8 +97,7 @@
       <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="logo"><a href="/"><img src="{% static 'images/logo.png' %}"></a></div>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"></span>
-        </button>
+          <span class="navbar-toggler-icon"></span></button>
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
           <ul class="navbar-nav mr-auto">
             <li class="nav-item"><a class="nav-link" href="{% url 'home' %}">Home</a></li>
@@ -115,52 +111,37 @@
       </nav>
     </div>
   </div>
-<!--client section start -->
-<div class="client_section layout_padding">
-  <div class="container">
-    <h1 class="what_taital">Testimonials</h1>
-    <p class="what_text">See what our happy customers have to say about our products and services.</p>
-    <div class="row">
-      {% for review in reviews %}
-        <div class="col-lg-4 col-md-6">
-          <div class="testimonial-card">
-            <div class="client_name">{{ review.name }}</div>
-            <div class="client_text">{{ review.description }}</div>
-            <div class="rating">
+  <div class="client_section layout_padding">
+    <div class="container">
+      <h1 class="what_taital">Testimonials</h1>
+      <p class="what_text">See what our happy customers have to say about our products and services.</p>
+      <div class="row">
+        {% for review in reviews %}
+          <div class="col-lg-4 col-md-6">
+            <div class="testimonial-card">
+              <div class="client_name">{{ review.name }}</div>
+              <div class="client_text">{{ review.description }}</div>
+              <div class="rating">
                 {% with review.rating|floatformat:1 as rounded_rating %}
                   {% for i in "12345" %}
                     {% if i|floatformat:0 < rounded_rating %}
-                      <svg class="full" viewBox="0 0 24 24">
-                        <path d="M12 2l2.39 6.93L21 9.24l-5.5 4.05 2.09 6.7L12 15.39l-5.59 4.6 2.09-6.7L3 9.24l6.61-.31L12 2z"/>
-                      </svg>
-                    {% elif i|floatformat:1 < rounded_rating %}
-                      <svg class="half" viewBox="0 0 24 24">
-                        <defs>
-                          <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
-                            <stop offset="50%" style="stop-color:#ffd700;stop-opacity:1" />
-                            <stop offset="50%" style="stop-color:#e0e0e0;stop-opacity:1" />
-                          </linearGradient>
-                        </defs>
-                        <path fill="url(#grad1)" d="M12 2l2.39 6.93L21 9.24l-5.5 4.05 2.09 6.7L12 15.39l-5.59 4.6 2.09-6.7L3 9.24l6.61-.31L12 2z"/>
-                      </svg>
+                      <i class="fas fa-star"></i>
+                    {% elif i|floatformat:0 == rounded_rating|floatformat:0 %}
+                      <i class="fas fa-star-half-alt"></i>
                     {% else %}
-                      <svg class="empty" viewBox="0 0 24 24">
-                        <path d="M12 2l2.39 6.93L21 9.24l-5.5 4.05 2.09 6.7L12 15.39l-5.59 4.6 2.09-6.7L3 9.24l6.61-.31L12 2z"/>
-                      </svg>
+                      <i class="far fa-star"></i>
                     {% endif %}
                   {% endfor %}
                 {% endwith %}
               </div>
-              
+            </div>
           </div>
-        </div>
-      {% empty %}
-        <p>No testimonials available.</p>
-      {% endfor %}
+        {% empty %}
+          <p>No testimonials available.</p>
+        {% endfor %}
+      </div>
     </div>
   </div>
-</div>
-
 
 <div class="footer_section layout_padding">
   <div class="container">
@@ -206,9 +187,7 @@
     </div>
     <!-- copyright section start -->
     <div class="copyright_section">
-                                    <div class="copyright_text">Copyright 2024 All Right Reserved By Touheed</div>
-
-
+      <div class="copyright_text">Copyright 2019 All Right Reserved By Yahya bin Usman</div>
     </div>
     <!-- copyright section end -->
   </div>

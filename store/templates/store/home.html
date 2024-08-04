@@ -364,16 +364,17 @@
       <div class="row">
         <div class="col-md-6 padding_left_0">
           <!-- Add this form section to your existing HTML template -->
-<div class="mail_section">
-<form method="post" action="{% url 'home' %}">
-  {% csrf_token %}
-  <input type="text" class="mail_text_1" placeholder="Name" name="name">
-  <input type="text" class="mail_text_1" placeholder="Phone Number" name="phone_number">
-  <input type="email" class="mail_text_1" placeholder="Email" name="email">
-  <textarea class="massage_text" placeholder="Message" rows="5" id="message" name="message"></textarea>
-  <button type="submit" class="send_bt">Send</button>
-</form>
-</div>
+          <div class="mail_section">
+            <form method="post" action="{% url 'contact' %}">
+              {% csrf_token %}
+              <input type="text" class="mail_text_1" placeholder="Name" name="name">
+              <input type="text" class="mail_text_1" placeholder="Phone Number" name="phone_number">
+              <input type="email" class="mail_text_1" placeholder="Email" name="email">
+              <textarea class="massage_text" placeholder="Message" rows="5" id="message" name="message"></textarea>
+              <button type="submit" class="send_bt">Send</button>
+            </form>
+          </div>
+          
 
         </div>
         <div class="col-md-6 padding_0">
