@@ -2,8 +2,10 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponseBadRequest, JsonResponse
 from django.core.mail import send_mail
 from datetime import date, timedelta, datetime
+from django.utils import timezone
+
 from decimal import Decimal
-from .models import Product, CartItem, Order, Review
+from .models import CityDeliveryInfo, Product, CartItem, Order, Review
 from .forms import CheckoutForm, ReviewForm
 from store import models
 from django.shortcuts import render
@@ -101,42 +103,73 @@ def add_to_cart(request, product_id):
 
     return redirect(request.META.get('HTTP_REFERER', 'home'))
 
-
-
-from django.shortcuts import render, get_object_or_404, redirect
-from django.http import HttpResponseBadRequest, JsonResponse
-from django.core.mail import send_mail
-from datetime import datetime, timedelta
+from django.shortcuts import render, redirect
+from django.http import HttpResponseBadRequest
+from django.utils import timezone
+from datetime import timedelta
 from decimal import Decimal
-from .models import Product, CartItem, Order
+from .models import CityDeliveryInfo, CartItem, Order, DailyDiscountCode
 from .forms import CheckoutForm
+from django.core.mail import send_mail
+from django.conf import settings
+from django.contrib import messages
 
-# Checkout view
 def checkout(request):
+    generate_daily_discount_code()  # Generate and email the code
+
     if request.method == 'POST':
         form = CheckoutForm(request.POST)
         if form.is_valid():
+            discount_code = request.POST.get('discount_code', '')
+            today_code = DailyDiscountCode.objects.filter(date=date.today(), code=discount_code).first()
+
+            if discount_code and not today_code:
+                return HttpResponseBadRequest('Invalid discount code')
+
+            if discount_code and request.user in today_code.used_by.all():
+                return HttpResponseBadRequest('You have already used today\'s discount code')
+
             order = form.save(commit=False)
             cart_items = CartItem.objects.all()
             products_info = ', '.join([f"{item.product.name} ({item.quantity})" for item in cart_items])
             order.products = products_info
 
             subtotal = sum([item.product.price * item.quantity for item in cart_items])
+            discount = Decimal('0.00')
+
+            if today_code:
+                discount = subtotal * Decimal('0.10')  # 10% discount
+                today_code.used_by.add(request.user)
+                today_code.save()
+
+            subtotal -= discount
             tax = subtotal * Decimal('0.17')
             total_price = subtotal + tax
+
+            # Calculate delivery charges based on the city and quantity
+            city = form.cleaned_data['city']
+            city_info = CityDeliveryInfo.objects.get(city=city)
+            delivery_charge = city_info.delivery_charge
+            total_quantity = sum(item.quantity for item in cart_items)
+
+            # Adjust delivery charge based on quantity
+            if total_quantity > 30:
+                delivery_charge *= Decimal('3.00')  # 200% more
+            elif total_quantity > 15:
+                delivery_charge *= Decimal('2.00')  # 100% more
+
+            total_price += delivery_charge
+
+            # Set the delivery date based on city delivery days
+            delivery_days = city_info.delivery_days
+            order.delivery_date = timezone.now().date() + timedelta(days=delivery_days)
             order.total_price = total_price
             order.save()
 
             for item in cart_items:
                 order.cart_items.add(item)
 
-            # Calculate average delivery time
-            total_delivery_time = sum(item.product.delivery_time * item.quantity for item in cart_items)
-            total_quantity = sum(item.quantity for item in cart_items)
-            average_delivery_time = total_delivery_time / total_quantity if total_quantity > 0 else 0
-
-            # Set the delivery date based on average delivery time
-            order.delivery_date = datetime.now().date() + timedelta(days=average_delivery_time)
+            order.user = request.user
             order.save()
 
             # Send confirmation email to customer
@@ -157,6 +190,7 @@ def checkout(request):
                 f'Delivery Date: {order.delivery_date}\n'
                 f'Subtotal: ${subtotal}\n'
                 f'Tax (17%): ${tax}\n'
+                f'Delivery Charge: ${delivery_charge}\n'
                 f'Total Price (After Tax): ${order.total_price}\n\n'
                 f'Products:\n{order.products}\n\n'
                 f'Your order has been received. Please expect a delivery confirmation email soon.'
@@ -164,7 +198,7 @@ def checkout(request):
             send_mail(
                 email_subject,
                 email_body,
-                'from@example.com',
+                settings.EMAIL_HOST_USER,
                 [order.email],
                 fail_silently=False,
             )
@@ -186,13 +220,14 @@ def checkout(request):
                 f'Delivery Date: {order.delivery_date}\n'
                 f'Subtotal: ${subtotal}\n'
                 f'Tax (17%): ${tax}\n'
+                f'Delivery Charge: ${delivery_charge}\n'
                 f'Total Price (After Tax): ${order.total_price}\n\n'
                 f'Products:\n{order.products}\n\n'
             )
             send_mail(
                 admin_email_subject,
                 admin_email_body,
-                'from@example.com',
+                settings.EMAIL_HOST_USER,
                 ['yahyabinusman7@gmail.com'],
                 fail_silently=False,
             )
@@ -322,3 +357,31 @@ def product_list(request, category):
         five_star_review_count=Count('reviews', filter=Q(reviews__rating=5))
     )
     return render(request, 'store/product_list.html', {'products': products, 'category': category})
+
+import random
+import string
+from datetime import date
+from django.core.mail import send_mail
+from django.conf import settings
+from .models import DailyDiscountCode
+
+def generate_daily_discount_code():
+    today = date.today()
+    existing_code = DailyDiscountCode.objects.filter(date=today).first()
+    
+    if not existing_code:
+        code = ''.join(random.choices(string.ascii_uppercase + string.digits, k=8))
+        new_code = DailyDiscountCode.objects.create(code=code)
+        
+        # Send the code via email
+        send_mail(
+            'Your Daily Discount Code',
+            f'Today\'s discount code is: {code}',
+            settings.EMAIL_HOST_USER,
+            ['yahyabinusman7@gmail.com'],
+            fail_silently=False,
+        )
+    else:
+        code = existing_code.code
+    
+    return code
