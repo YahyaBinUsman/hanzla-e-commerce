@@ -1,631 +1,448 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Home - E-commerce Store</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.min.css">
-    <style>
-        body {
-            background-color: #f0f0f0;
-            color: #333;
-            font-family: 'Montserrat', sans-serif;
-            line-height: 1.6;
-            margin: 0;
-            padding: 0;
-            overflow-x: hidden;
-        }
+  <!-- basic -->
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- mobile metas -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+  <!-- site metas -->
+  <title>E-commerce Store</title>
+  <meta name="keywords" content="e-commerce, online shopping, store">
+  <meta name="description" content="Discover premium products and exclusive offers at our E-commerce Store.">
+  <meta name="author" content="E-commerce Store Team">
+  <!-- bootstrap css -->
+  <link rel="stylesheet" type="text/css" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+  <!-- style css -->
+  <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
+  <!-- Responsive-->
+  <link rel="stylesheet" href="{% static 'css/responsive.css' %}">
+  <!-- fevicon -->
+  <link rel="icon" href="{% static 'images/fevicon.png' %}" type="image/gif" />
+  <!-- Scrollbar Custom CSS -->
+  <link rel="stylesheet" href="{% static 'css/jquery.mCustomScrollbar.min.css' %}">
+  <!-- Tweaks for older IEs-->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+  <!-- owl stylesheets -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.theme.default.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" media="screen">
+  <style>
+    .send_bt  {
+      width: 100%;
+      float: left;
+      font-size: 20px;
+      color: #ffffff;
+      text-align: center;
+      background-color: #ff5a58;
+      padding: 10px 0px;
+      text-transform: uppercase;
+      border-radius: 30px;
+  }
 
-        nav {
-            background-color: #2c3e50;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            position: fixed;
-            width: 100%;
-            top: 0;
-            z-index: 1000;
-            padding: 1em 0;
-            transition: all 0.3s ease;
-        }
+  .services-section {
+    padding: 60px 0;
+  }
+  .service-card {
+    background: linear-gradient(to right bottom, #536976, #292e49);
+    border-radius: 20px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    padding: 30px;
+    margin-bottom: 30px;
+    text-align: center;
+    transition: transform 0.3s, box-shadow 0.3s;
+    max-width: 300px;
+    margin: 0 auto 30px auto;
+    height: auto;
+  }
 
-        nav ul {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
+  .service-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+  }
 
-        nav ul li {
-            padding: 0 1em;
-        }
+  .service-icon img {
+    max-width: 100px;
+  }
 
-        nav a {
-            color: #fff;
-            text-decoration: none;
-            font-weight: bold;
-            transition: color 0.3s ease;
-            position: relative;
-        }
+  .service-card h3 {
+    font-size: 26px;
+    color: #ffffff;
+    margin-bottom: 20px;
+  }
 
-        nav a::before {
-            content: "";
-            position: absolute;
-            width: 0;
-            height: 2px;
-            bottom: 0;
-            left: 0;
-            background-color: #e74c3c;
-            visibility: hidden;
-            transition: all 0.3s ease-in-out;
-        }
+  .price-text {
+    font-size: 20px;
+    color: #ffffff;
+    margin-bottom: 15px;
+  }
 
-        nav a:hover::before {
-            visibility: visible;
-            width: 100%;
-        }
+  .points-section ul {
+    padding: 0;
+    margin: 20px 0;
+  }
 
-        nav a:hover {
-            color: #e74c3c;
-        }
+  .points-section li {
+    font-size: 18px;
+    color: #ffffff;
+    margin-bottom: 10px;
+  }
 
-        header {
-            background-image: url('https://source.unsplash.com/1600x900/?shopping,store');
-            background-size: cover;
-            background-position: center;
-            height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #fff;
-            position: relative;
-            text-align: center;
-        }
+  .subscribe-btn {
+    background-color: #ff6b6b;
+    color: #ffffff;
+    border: none;
+    border-radius: 30px;
+    padding: 12px 40px;
+    font-size: 18px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
 
-        header::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: -1;
-        }
+  .subscribe-btn:hover {
+    background-color: #ff5252;
+  }
 
-        header h1 {
-            font-size: 4em;
-            margin: 0;
-            text-transform: uppercase;
-            letter-spacing: 3px;
-        }
+  .centered-heading {
+    text-align: center;
+  }
 
-        header p {
-            font-size: 1.5em;
-            margin: 1em 0;
-            max-width: 600px;
-            text-align: center;
-            line-height: 1.4;
-        }
+  .centered-heading:before {
+    content: "";
+    width: 60px;
+    height: 3px;
+    background-color: #ff5a58;
+    left: 50%;
+    top: -10px;
+    transform: translateX(-50%);
+  }
+   /* Testimonial card adjustments */
+   .testimonial-card {
+    background: linear-gradient(135deg, #0ebab1, #050505);
+    border-radius: 20px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    padding: 30px;
+    color: #ffffff;
+    text-align: center;
+    margin-bottom: 30px;
+    transition: transform 0.3s, box-shadow 0.3s;
+    height: 400px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
 
-        .btn-primary {
-            background-color: #e74c3c;
-            color: #fff;
-            border-radius: 25px;
-            padding: 1em 2em;
-            text-decoration: none;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            position: relative;
-        }
+  .testimonial-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
+  }
 
-        .btn-primary:hover {
-            background-color: #c0392b;
-            transform: translateY(-3px);
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-        }
+  .client_name {
+    font-size: 32px;
+    font-weight: bold;
+    margin-bottom: 15px;
+    color: #000000;
+    text-decoration: underline;
+    font-style: italic;
+    font-family: Georgia, 'Times New Roman', Times, serif;
+  }
 
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 2em 6em;
-        }
-        .container1 {
-            max-width: 1200px;
-            text-align: center;
 
-        }
-        .container1 p {
-            max-width: 1200px;
-            text-align: center;
-            
-        }
-        
+  .client_text {
+    font-size: 22px;
+    margin-bottom: 20px;
+    line-height: 1.6;
+    color: #ffffff;
+    font-style: italic;
+  }
 
-        .section {
-            padding: 4em 0;
-            text-align: center;
-        }
+  .rating {
+    font-size: 36px;
+    color: #ffc107;
+    margin-top: auto;
+  }
 
-        .section h2 {
-            font-size: 3em;
-            margin-bottom: 0.5em;
-            color: #2c3e50;
-            position: relative;
-            display: inline-block;
-        }
-        
-        .section h2::after {
-            content: '';
-            display: block;
-            width: 100px;
-            height: 4px;
-            background: #e74c3c;
-            border-radius: 2px;
-            margin: 0.5em auto 1.5em;
-        }
-
-        .section p {
-            font-size: 1.1em;
-            margin-bottom: 2em;
-            color: #555;
-            max-width: 800px;
-            margin: 0 auto 2em;
-        }
-
-        .cards {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr); /* Two columns */
-            gap: 1.5em;
-            padding: 0 1em;
-            justify-content: center; /* Center the grid items horizontally */
-            max-width: 1200px; /* Optional: limit the maximum width of the container */
-            margin: 0 auto; /* Optional: center the container itself */
-        }
-        
-
-        .card {
-            background-color: #fff;
-            border-radius: 15px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
-            transition: transform 0.3s ease;
-            position: relative;
-        }
-
-        .card img {
-            width: 100%;
-            height: 200px;
-            object-fit: cover;
-        }
-
-        .card-content {
-            padding: 1.5em;
-        }
-
-        .card-content h3 {
-            margin: 0;
-            font-size: 1.4em;
-            color: #2c3e50;
-            margin-bottom: 0.5em;
-            position: relative;
-        }
-
-        .card-content h3::after {
-            content: '';
-            display: block;
-            width: 50px;
-            height: 2px;
-            background: #e74c3c;
-            border-radius: 2px;
-            margin: 0.5em 0;
-        }
-
-        .card-content p {
-            font-size: 0.95em;
-            margin: 0.5em 0;
-            color: #777;
-            line-height: 1.6;
-        }
-
-        .card-content a {
-            text-decoration: none;
-            color: #fff;
-            background-color: #e74c3c;
-            padding: 0.7em 1.5em;
-            border-radius: 20px;
-            display: inline-block;
-            transition: background-color 0.3s ease;
-        }
-
-        .card-content a:hover {
-            background-color: #c0392b;
-        }
-
-        .card:hover {
-            transform: translateY(-5px);
-        }
-
-        .highlight {
-            background-color: #e74c3c;
-            color: #fff;
-            padding: 2em;
-            margin: 2em 0;
-            border-radius: 15px;
-            position: relative;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        .highlight h3 {
-            font-size: 2em;
-            margin-bottom: 0.5em;
-        }
-
-        .highlight p {
-            font-size: 1.1em;
-            line-height: 1.6;
-            margin-bottom: 1em;
-        }
-
-        .highlight a {
-            text-decoration: none;
-            color: #2c3e50;
-            font-weight: bold;
-            background-color: #fff;
-            padding: 0.7em 1.5em;
-            border-radius: 20px;
-            display: inline-block;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        .highlight a:hover {
-            background-color: #ecf0f1;
-            transform: translateY(-3px);
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-        }
-
-        .testimonials {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .testimonial {
-            background-color: #fff;
-            border-radius: 15px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            padding: 2em;
-            margin: 1.5em 0;
-            max-width: 800px;
-            position: relative;
-            transition: all 0.3s ease;
-        }
-
-        .testimonial:hover {
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-            transform: translateY(-5px);
-        }
-
-        .testimonial p {
-            font-size: 1em;
-            line-height: 1.5;
-            color: #555;
-            margin-bottom: 1em;
-            position: relative;
-        }
-
-        .testimonial cite {
-            font-size: 0.9em;
-            color: #2c3e50;
-            position: absolute;
-            bottom: 1em;
-            right: 2em;
-            font-weight: bold;
-        }
-
-        .faq {
-            background-color: #fff;
-            border-radius: 15px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            padding: 2em;
-            margin: 2em 0;
-            transition: all 0.3s ease;
-        }
-
-        .faq:hover {
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-            transform: translateY(-5px);
-        }
-
-        .faq h3 {
-            font-size: 1.8em;
-            color: #2c3e50;
-            margin-bottom: 0.5em;
-            position: relative;
-        }
-
-        .faq h3::after {
-            content: '';
-            display: block;
-            width: 50px;
-            height: 2px;
-            background: #e74c3c;
-            border-radius: 2px;
-            margin: 0.5em 0;
-        }
-
-        .faq p {
-            font-size: 0.95em;
-            color: #555;
-            line-height: 1.6;
-            margin-top: 1em;
-        }
-
-        .contact-form {
-            background-color: #fff;
-            border-radius: 15px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            padding: 2em;
-            margin: 2em 0;
-            transition: all 0.3s ease;
-        }
-
-        .contact-form:hover {
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-            transform: translateY(-5px);
-        }
-
-        .contact-form input, .contact-form textarea {
-            width: 100%;
-            padding: 1em;
-            margin-bottom: 1em;
-            border-radius: 5px;
-            border: 1px solid #ddd;
-            font-size: 1em;
-        }
-
-        .contact-form button {
-            background-color: #e74c3c;
-            color: #fff;
-            border: none;
-            padding: 1em 2.5em;
-            border-radius: 25px;
-            font-size: 1.1em;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        .contact-form button:hover {
-            background-color: #c0392b;
-            transform: translateY(-3px);
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-        }
-
-        footer {
-            background-color: #2c3e50;
-            color: #fff;
-            text-align: center;
-            padding: 2em 0;
-            position: relative;
-            bottom: 0;
-            width: 100%;
-        }
-
-        footer p {
-            margin: 0.5em 0;
-        }
-
-        footer a {
-            color: #e74c3c;
-            text-decoration: none;
-            margin: 0 0.5em;
-            transition: color 0.3s ease;
-        }
-
-        footer a:hover {
-            text-decoration: underline;
-        }
-
-        @media (max-width: 768px) {
-            header h1 {
-                font-size: 3em;
-            }
-
-            header p {
-                font-size: 1.2em;
-            }
-
-            .highlight {
-                padding: 1.5em;
-            }
-
-            .section h2 {
-                font-size: 2.5em;
-            }
-        }
-
-        @media (max-width: 480px) {
-            header h1 {
-                font-size: 2em;
-            }
-
-            header p {
-                font-size: 1em;
-            }
-
-            .section h2 {
-                font-size: 2em;
-            }
-
-            .card-content h3 {
-                font-size: 1.2em;
-            }
-
-            .faq h3 {
-                font-size: 1.5em;
-            }
-        }
-    </style>
+  .rating span {
+    color: #ffd700; /* Golden color */
+  }
+  </style>
 </head>
 <body>
-    <nav>
-        <ul>
-            <li><strong>E-commerce Store</strong></li>
-            <li><a href="{% url 'home' %}">Home</a></li>
-            <li><a href="{% url 'product_list' category='towel' %}">Towels</a></li>
-            <li><a href="{% url 'product_list' category='bedsheet' %}">Bed Sheets</a></li>
-            <li><a href="{% url 'product_list' category='ahram' %}">Ahram</a></li>
-            <li><a href="{% url 'product_list' category='slipper' %}">Slippers</a></li>
-            <li><a href="{% url 'view_cart' %}">View Cart</a></li>
-        </ul>
-    </nav>
-
-    <header>
-        <div class="container1">
-            <h1>Welcome to Our <br>TOUHEED E-commerce Store</h1>
-            <p>Discover premium products and exclusive offers, tailored just for you. Shop now and experience unparalleled quality and service.</p>
-            <a class="btn-primary" href="{% url 'product_list' category='towel' %}">Shop Now</a>
+  <!--header section start -->
+  <div class="header_section">
+    <div class="header_left">
+      <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="logo"><a href="/"><img src="{% static 'images/logo.png' %}"></a></div>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav mr-auto">
+            <li class="nav-item"><a class="nav-link" href="{% url 'home' %}">Home</a></li>
+            <li class="nav-item"><a class="nav-link" href="{% url 'product_list' category='towel' %}">Towels</a></li>
+            <li class="nav-item"><a class="nav-link" href="{% url 'product_list' category='bedsheet' %}">Bed Sheets</a></li>
+            <li class="nav-item"><a class="nav-link" href="{% url 'product_list' category='ahram' %}">Ahram</a></li>
+            <li class="nav-item"><a class="nav-link" href="{% url 'product_list' category='slipper' %}">Slippers</a></li>
+            <li class="nav-item"><a class="nav-link" href="{% url 'view_cart' %}">View Cart</a></li>
+          </ul>
         </div>
-    </header>
-    
+      </nav>
+      <div class="banner_main">
+        <h1 class="banner_taital">Welcome to Our <br>TOUHEED E-commerce Store</h1>
+        <p class="banner_text">Discover premium products and exclusive offers, tailored just for you. Shop now and experience unparalleled quality and service. Lorem ipsum dolor sit amet consectetur adipisicing elit. Error veniam quia minima ut culpa laboriosam eligendi ipsam itaque hic sapiente, voluptatibus cum deserunt dolorem, ullam perferendis ipsum voluptates tempore reiciendis, fuga nulla temporibus ea architecto. Sequi exercitationem voluptates atque aspernatur, illo sapiente eius explicabo soluta nemo sint veritatis repellat? Vitae tempore a quis porro rem cum ipsam dolor commodi.</p>
+        <div class="btn_main">
+          <div class="more_bt"><a href="{% url 'product_list' category='towel' %}">Shop Now</a></div>
+        </div>
+      </div>
+    </div>
+    <div class="header_right">
+      <img src="{% static 'images/banner-img.png' %}" class="banner_img">
+    </div>
+  </div>
+  <!--header section end -->
 
-    <main class="container">
-        <section class="section" id="about-us">
-            <h2>About Us</h2>
-            <p>We are a leading e-commerce store offering a wide range of quality products to enhance your home experience. Our mission is to provide an exceptional shopping experience with top-notch customer service and premium products.</p>
-            <div class="highlight">
-                <h3>Why Choose Us?</h3>
-                <p>With years of experience in the industry, we bring you only the best products that are carefully selected for quality and style. We strive to ensure customer satisfaction with every purchase.</p>
-                <a href="#">Learn More</a>
-            </div>
-            <div class="cards">
-                <div class="card">
-                    <img src="https://source.unsplash.com/300x200/?towel" alt="Towel">
-                    <div class="card-content">
-                        <h3>Luxurious Towels</h3>
-                        <p>Experience the ultimate comfort with our luxurious towel collection, crafted with the finest materials.</p>
-                        <a href="{% url 'product_list' category='towel' %}">Shop Towels</a>
-                    </div>
-                </div>
-                <div class="card">
-                    <img src="https://source.unsplash.com/300x200/?bedsheet" alt="Bed Sheet">
-                    <div class="card-content">
-                        <h3>Elegant Bed Sheets</h3>
-                        <p>Transform your bedroom with our elegant and stylish bed sheets, designed for both comfort and aesthetics.</p>
-                        <a href="{% url 'product_list' category='bedsheet' %}">Shop Bed Sheets</a>
-                    </div>
-                </div>
-                <div class="card">
-                    <img src="https://source.unsplash.com/300x200/?ahram" alt="Ahram">
-                    <div class="card-content">
-                        <h3>Quality Ahram</h3>
-                        <p>Discover our range of quality ahrams, perfect for adding a touch of tradition and elegance to your home.</p>
-                        <a href="{% url 'product_list' category='ahram' %}">Shop Ahram</a>
-                    </div>
-                </div>
-                <div class="card">
-                    <img src="https://source.unsplash.com/300x200/?slipper" alt="Slipper">
-                    <div class="card-content">
-                        <h3>Comfortable Slippers</h3>
-                        <p>Step into comfort with our collection of soft and cozy slippers, designed for ultimate relaxation.</p>
-                        <a href="{% url 'product_list' category='slipper' %}">Shop Slippers</a>
-                    </div>
-                </div>
-            </div>
-        </section>
+  <!--about section start -->
+  <div class="services_section layout_padding">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-8">
+          <h1 class="services_taital">About Us</h1>
+          <p class="services_text">We are a leading e-commerce store offering a wide range of quality products to enhance your home experience. Our mission is to provide an exceptional shopping experience with top-notch customer service and premium products.</p>
+          <div class="highlight">
+            <h3>Choose Us?</h3>
+            <p>With years of experience in the industry, we bring you only the best products that are carefully selected for quality and style. We strive to ensure customer satisfaction with every purchase.</p>
+            <div class="moremore_bt"><a href="#">Learn More</a></div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div><img src="{% static 'images/img-1.png' %}" class="image_1"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!--about section end -->
 
-        <section class="section" id="new-arrivals">
-            <h2>New Arrivals</h2>
-            <p>Stay updated with our latest collection of home essentials and trends. Discover what's new and find inspiration for your home decor needs.</p>
-            <div class="cards">
-                <div class="card">
-                    <img src="https://source.unsplash.com/300x200/?home,decor" alt="Home Decor">
-                    <div class="card-content">
-                        <h3>Modern Home Decor</h3>
-                        <p>Add a touch of elegance with our modern home decor items, designed to elevate your living space.</p>
-                        <a href="#">Browse Decor</a>
-                    </div>
-                </div>
-                <div class="card">
-                    <img src="https://source.unsplash.com/300x200/?cushion" alt="Cushion">
-                    <div class="card-content">
-                        <h3>Stylish Cushions</h3>
-                        <p>Enhance comfort and style with our range of stylish cushions, available in a variety of colors and designs.</p>
-                        <a href="#">Explore Cushions</a>
-                    </div>
-                </div>
-                <div class="card">
-                    <img src="https://source.unsplash.com/300x200/?cushion" alt="Cushion">
-                    <div class="card-content">
-                        <h3>Stylish Cushions</h3>
-                        <p>Enhance comfort and style with our range of stylish cushions, available in a variety of colors and designs.</p>
-                        <a href="#">Explore Cushions</a>
-                    </div>
-                </div>
-                <div class="card">
-                    <img src="https://source.unsplash.com/300x200/?blanket" alt="Blanket">
-                    <div class="card-content">
-                        <h3>Cozy Blankets</h3>
-                        <p>Wrap yourself in warmth with our cozy and luxurious blankets, perfect for any season.</p>
-                        <a href="#">Shop Blankets</a>
-                    </div>
-                </div>
+  <!--products section start -->
+  <div class="services_section layout_padding">
+    <div class="container">
+      <h1 class="what_taital">What We Offer</h1>
+      <p class="what_text">Discover our comprehensive range of home essentials and trends, tailored to meet your needs.</p>
+      <div class="what_we_do_section_2">
+        <div class="row">
+          <div class="col-lg-3 col-sm-6">
+            <div class="box_main">
+              <div class="icon_1"><img src="{% static 'images/icon-1.png' %}"></div>
+              <h3 class="accounting_text">Luxurious Towels</h3>
+              <p class="lorem_text">Experience the ultimate comfort with our luxurious towel collection, crafted with the finest materials.</p>
+              <div class="moremore_bt_1"><a href="{% url 'product_list' category='towel' %}">Shop Now</a></div>
             </div>
-        </section>
-
-        <section class="section" id="testimonials">
-            <h2>Customer Testimonials</h2>
-            <div class="testimonials">
-                <div class="testimonial">
-                    <p>"The quality of the products is exceptional, and the customer service is outstanding. I've been a loyal customer for years and will continue to be. Highly recommend!"</p>
-                    <cite>- Jane Doe</cite>
-                </div>
-                <div class="testimonial">
-                    <p>"Fast delivery, great prices, and amazing products. I am thrilled with my purchases and will definitely be shopping here again."</p>
-                    <cite>- John Smith</cite>
-                </div>
-                <div class="testimonial">
-                    <p>"I love the variety of products and the quality is unmatched. The website is easy to navigate, and customer service is always helpful."</p>
-                    <cite>- Sarah Johnson</cite>
-                </div>
+          </div>
+          <div class="col-lg-3 col-sm-6">
+            <div class="box_main">
+              <div class="icon_1"><img src="{% static 'images/icon-2.png' %}"></div>
+              <h3 class="accounting_text">Elegant Bed Sheets</h3>
+              <p class="lorem_text">Transform your bedroom with our elegant and stylish bed sheets, designed for both comfort and aesthetics.</p>
+              <div class="moremore_bt_1"><a href="{% url 'product_list' category='bedsheet' %}">Shop Now</a></div>
             </div>
-        </section>
-
-        <section class="section" id="faq">
-            <h2>Frequently Asked Questions</h2>
-            <div class="faq">
-                <h3>What is your return policy?</h3>
-                <p>We offer a 30-day return policy on all items. If you're not satisfied with your purchase, you can return it for a full refund or exchange. Please ensure the products are unused and in their original packaging.</p>
-                <h3>Do you offer international shipping?</h3>
-                <p>Yes, we ship internationally. Shipping costs and delivery times vary based on the destination. You can calculate shipping costs during the checkout process.</p>
-                <h3>How can I track my order?</h3>
-                <p>Once your order is shipped, you will receive a confirmation email with a tracking number. You can use this number to track your order on our website or the carrier's website.</p>
+          </div>
+          <div class="col-lg-3 col-sm-6">
+            <div class="box_main">
+              <div class="icon_1"><img src="{% static 'images/icon-3.png' %}"></div>
+              <h3 class="accounting_text">Quality Ahram</h3>
+              <p class="lorem_text">Discover our range of quality ahrams, perfect for adding a touch of tradition and elegance to your home.</p>
+              <div class="moremore_bt_1"><a href="{% url 'product_list' category='ahram' %}">Shop Now</a></div>
             </div>
-        </section>
-
-        <section class="section" id="contact-us">
-            <h2>Contact Us</h2>
-            <p>We'd love to hear from you. Get in touch with us for any queries or support. Our team is here to help you every step of the way.</p>
-            <div class="contact-form">
-                <form>
-                    <input type="text" name="name" placeholder="Your Name" required>
-                    <input type="email" name="email" placeholder="Your Email" required>
-                    <input type="tel" name="phone" placeholder="Your Phone Number">
-                    <textarea name="message" placeholder="Your Message" required></textarea>
-                    <button type="submit">Send Message</button>
-                </form>
+          </div>
+          <div class="col-lg-3 col-sm-6">
+            <div class="box_main">
+              <div class="icon_1"><img src="{% static 'images/icon-4.png' %}"></div>
+              <h3 class="accounting_text">Comfortable Slippers</h3>
+              <p class="lorem_text">Step into comfort with our collection of soft and cozy slippers, designed for ultimate relaxation.</p>
+              <div class="moremore_bt_1"><a href="{% url 'product_list' category='slipper' %}">Shop Now</a></div>
             </div>
-        </section>
-    </main>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!--products section end -->
 
-    <footer>
-        <p>&copy; 2024 E-commerce Store. All rights reserved.</p>
-        <p><a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a></p>
-    </footer>
+  
+  <!-- new arrivals section start -->
+  <div class="services_section layout_padding">
+    <div class="container">
+      <h1 class="what_taital">New Arrivals</h1>
+      <p class="what_text">Discover our comprehensive range of home essentials and trends, tailored to meet your needs.</p>
+      <div class="what_we_do_section_2">
+      <div class="row">
+        <div class="col-lg-4 col-md-6">
+          <div class="service-card">
+            <div class="service-icon"><img src="{% static 'images/new-arrival1.png' %}" alt="Product 1"></div>
+            <h3>New Arrival 1</h3>
+            <p class="price-text">$29.99</p>
+            <div class="points-section">
+              <ul>
+                <li>High-quality material</li>
+                <li>Comfortable and durable</li>
+                <li>Elegant design</li>
+              </ul>
+            </div>
+            <button class="subscribe-btn">Buy Now</button>
+          </div>
+        </div>
+        <div class="col-lg-4 col-md-6">
+          <div class="service-card">
+            <div class="service-icon"><img src="{% static 'images/new-arrival2.png' %}" alt="Product 2"></div>
+            <h3>New Arrival 2</h3>
+            <p class="price-text">$39.99</p>
+            <div class="points-section">
+              <ul>
+                <li>High-quality material</li>
+                <li>Comfortable and durable</li>
+                <li>Elegant design</li>
+              </ul>
+            </div>
+            <button class="subscribe-btn">Buy Now</button>
+          </div>
+        </div>
+        
+        <div class="col-lg-4 col-md-6">
+          <div class="service-card">
+            <div class="service-icon"><img src="{% static 'images/new-arrival3.png' %}" alt="Product 3"></div>
+            <h3>New Arrival 3</h3>
+            <p class="price-text">$49.99</p>
+            <div class="points-section">
+              <ul>
+                <li>High-quality material</li>
+                <li>Comfortable and durable</li>
+                <li>Elegant design</li>
+              </ul>
+            </div>
+            <button class="subscribe-btn">Buy Now</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<!--client section start -->
+<div class="client_section layout_padding">
+  <div class="container">
+    <h1 class="what_taital">Testimonials</h1>
+    <p class="what_text">See what our happy customers have to say about our products and services.</p>
+    <div class="row">
+      {% for review in five_star_reviews %}
+        <div class="col-lg-4 col-md-6">
+          <div class="testimonial-card">
+            <div class="client_name">{{ review.name }}</div>
+            <div class="client_text">{{ review.description }}</div>
+            <div class="rating">
+              {% for i in "12345" %}
+                {% if i|floatformat:0 <= review.rating %}
+                  <span>&#9733;</span>
+                {% else %}
+                  <span>&#9734;</span>
+                {% endif %}
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+      {% empty %}
+        <p>No testimonials available.</p>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+<!--client section end -->
+    <h1 class="what_taital">Contact us</h1>
+    <p class="amet_text">amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore </p>
+    <div class="contact_section2">
+      <div class="row">
+        <div class="col-md-6 padding_left_0">
+          <!-- Add this form section to your existing HTML template -->
+<div class="mail_section">
+<form method="post" action="{% url 'home' %}">
+  {% csrf_token %}
+  <input type="text" class="mail_text_1" placeholder="Name" name="name">
+  <input type="text" class="mail_text_1" placeholder="Phone Number" name="phone_number">
+  <input type="email" class="mail_text_1" placeholder="Email" name="email">
+  <textarea class="massage_text" placeholder="Message" rows="5" id="message" name="message"></textarea>
+  <button type="submit" class="send_bt">Send</button>
+</form>
+</div>
+
+        </div>
+        <div class="col-md-6 padding_0">
+          <div class="map-responsive">
+            <iframe src="https://www.google.com/maps/embed/v1/place?key=AIzaSyA0s1a7phLN0iaD6-UE7m4qP-z21pH0eSc&amp;q=Plot+11,+Block+E+Pia+Housing+Scheme,+Lahore,+Punjab+54770,+Pakistan/@31.4475933,74.2795881,21z/data=!4m6!3m5!1s0x3919016c4b9f0f21:0x694fa2e3f3774c5!8m2!3d31.4475887!4d74.279749!16s%2Fg%2F11f3j7nwtv?entry=ttu" width="600" height="400" frameborder="0" style="border:0; width: 100%;" allowfullscreen=""></iframe>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="footer_section layout_padding">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-3 col-sm-6">
+        <h4 class="about_text">About Touheed</h4>
+        <div class="location_text"><img src="{% static 'images/map-icon.png' %}"><span class="padding_left_15">Locations</span></div>
+        <div class="location_text"><img src="{% static 'images/call-icon.png' %}"><span class="padding_left_15">+01 9876543210</span></div>
+        <div class="location_text"><img src="{% static 'images/mail-icon.png' %}"><span class="padding_left_15">demo@gmail.com</span></div>
+      </div>
+      <div class="col-lg-3 col-sm-6">
+        <h4 class="about_text">About Touheed</h4>
+        <p class="dolor_text">ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt</p>
+      </div>
+      <div class="col-lg-3 col-sm-6">
+        <h4 class="about_text">Instagram</h4>
+        <div class="footer_images">
+          <div class="footer_images_left">
+            <div class="image_12"><img src="{% static 'images/img-12.png' %}"></div>
+            <div class="image_12"><img src="{% static 'images/img-12.png' %}"></div>
+            <div class="image_12"><img src="{% static 'images/img-12.png' %}"></div>
+          </div>
+          <div class="footer_images_right">
+            <div class="image_12"><img src="{% static 'images/img-12.png' %}"></div>
+            <div class="image_12"><img src="{% static 'images/img-12.png' %}"></div>
+            <div class="image_12"><img src="{% static 'images/img-12.png' %}"></div>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-3 col-sm-6">
+        <h4 class="about_text">Newsletter</h4>
+        <input type="text" class="mail_text" placeholder="Enter your email" name="Enter your email">
+        <div class="subscribe_bt"><a href="#">Subscribe</a></div>
+        <div class="footer_social_icon">
+          <ul>
+            <li><a href="#"><img src="{% static 'images/fb-icon1.png' %}"></a></li>
+             <li><a href="#"><img src="{% static 'images/twitter-icon1.png' %}"></a></li>
+            <li><a href="#"><img src="{% static 'images/linkedin-icon1.png' %}"></a></li>
+            <li><a href="#"><img src="{% static 'images/youtub-icon1.png' %}"></a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <!-- copyright section start -->
+    <div class="copyright_section">
+                  <div class="copyright_text">Copyright 2019 All Right Reserved By Yahya bin Usman</div>
+
+    </div>
+    <!-- copyright section end -->
+  </div>
+</div>
+
+  <!-- Javascript files-->
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js"></script>
+  <script src="{% static 'js/custom.js' %}"></script>
 </body>
 </html>

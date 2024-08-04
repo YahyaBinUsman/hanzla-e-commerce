@@ -1,75 +1,259 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- basic -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- site metas -->
     <title>View Cart</title>
+    <meta name="keywords" content="e-commerce, online shopping, cart">
+    <meta name="description" content="View the items in your cart and proceed to checkout.">
+    <meta name="author" content="E-commerce Store Team">
+    <!-- bootstrap css -->
+    <link rel="stylesheet" type="text/css" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <!-- style css -->
+    <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
+    <!-- Responsive-->
+    <link rel="stylesheet" href="{% static 'css/responsive.css' %}">
+    <!-- fevicon -->
+    <link rel="icon" href="{% static 'images/fevicon.png' %}" type="image/gif" />
+    <!-- Scrollbar Custom CSS -->
+    <link rel="stylesheet" href="{% static 'css/jquery.mCustomScrollbar.min.css' %}">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+    <!-- Owl Carousel -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.theme.default.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" media="screen">
+    <!-- Custom CSS -->
     <style>
-        body {
-            background-color: white;
-            color: #0ebab1;
-            font-family: Arial, sans-serif;
+        .cart-container {
+            padding: 20px 0;
         }
-        .navbar {
-            background-color: white;
-            padding: 1em;
+        .cart-table {
+            width: 100%;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
         }
-        .navbar a {
-            color: #0ebab1;
-            text-decoration: none;
-            margin: 0 1em;
+        .cart-table th, .cart-table td {
+            padding: 10px;
+            text-align: center;
+            font-size: 0.9rem;
         }
-        .container {
-            max-width: 800px;
-            margin: 2em auto;
+        .cart-table th {
+            background-color: #f8f9fa;
         }
-        .list-group-item {
-            border: 1px solid #0ebab1;
-            border-radius: 5px;
-            padding: 1em;
-            margin: 0.5em 0;
+        .cart-summary {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
         }
-        .btn {
-            background-color: #0ebab1;
-            color: white;
+        .cart-summary h4 {
+            margin-bottom: 20px;
+        }
+        .cart-summary .summary-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        .cart-summary .summary-total {
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+        .btn-primary {
+            background-color: #ff6b6b;
             border: none;
-            padding: 0.5em 1em;
-            text-decoration: none;
-            border-radius: 5px;
+            border-radius: 30px;
+            padding: 12px 30px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
         }
+        .btn-primary:hover {
+            background-color: #ff5252;
+        }
+        @media (max-width: 768px) {
+            .cart-table th, .cart-table td {
+                font-size: 0.8rem;
+                padding: 8px;
+            }
+            .cart-summary .summary-total {
+                font-size: 1rem;
+            }
+            .btn-primary {
+                padding: 10px 20px;
+                font-size: 14px;
+            }
+        }
+        @media (max-width: 576px) {
+            .cart-table th, .cart-table td {
+                font-size: 0.7rem;
+                padding: 6px;
+            }
+            .cart-summary .summary-total {
+                font-size: 0.9rem;
+            }
+            .btn-primary {
+                padding: 8px 15px;
+                font-size: 12px;
+            }
+        }
+        @media (max-width: 320px) {
+            .cart-table th, .cart-table td {
+                font-size: 0.6rem;
+                padding: 4px;
+            }
+            .btn-danger {
+                padding: 6px 10px; /* Adjust the padding */
+                font-size: 12px;  /* Adjust the font size */
+                width: 100%;      /* Make the button take full width of the cell */
+                box-sizing: border-box; /* Ensure padding is included in the width */
+                text-align: center; /* Center text inside the button */
+            }
+        }
+        
     </style>
 </head>
 <body>
-    <nav class="navbar">
-        <a href="{% url 'home' %}">Home</a>
-        <a href="{% url 'product_list' category='towel' %}">Towels</a>
-        <a href="{% url 'product_list' category='bedsheet' %}">Bed Sheets</a>
-        <a href="{% url 'product_list' category='ahram' %}">Ahram</a>
-        <a href="{% url 'product_list' category='slipper' %}">Slippers</a>
-        <a href="{% url 'view_cart' %}">View Cart</a>
-    </nav>
-    <div class="container">
-        <h1 class="text-center">Your Cart</h1>
-        <ul class="list-group">
-            {% for item_with_total in cart_items_with_totals %}
-                <li class="list-group-item d-flex justify-content-between align-items-center">
-                    <div>
-                        <h5>{{ item_with_total.item.product.name }}</h5>
-                        <p>Price: ${{ item_with_total.item.product.price }}</p>
-                        <p>Quantity: {{ item_with_total.item.quantity }}</p>
-                        <p>Total: ${{ item_with_total.total }}</p>
-                    </div>
-                    <a href="{% url 'remove_from_cart' item_with_total.item.id %}" class="btn btn-danger">Remove One</a>
-                </li>
-            {% endfor %}
-        </ul>
-        <div class="mt-4">
-            <p><strong>Subtotal:</strong> ${{ total }}</p>
-            <p><strong>Tax (17%):</strong> ${{ tax }}</p>
-            <p><strong>Grand Total:</strong> ${{ grand_total }}</p>
+    <!--header section start -->
+    <div class="header_section">
+        <div class="header_left">
+            <nav class="navbar navbar-expand-lg navbar-light bg-light">
+                <div class="logo"><a href="/"><img src="{% static 'images/logo.png' %}"></a></div>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav mr-auto">
+                        <li class="nav-item"><a class="nav-link" href="{% url 'home' %}">Home</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'product_list' category='towel' %}">Towels</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'product_list' category='bedsheet' %}">Bed Sheets</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'product_list' category='ahram' %}">Ahram</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'product_list' category='slipper' %}">Slippers</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'view_cart' %}">View Cart</a></li>
+                    </ul>
+                </div>
+            </nav>
         </div>
-        <a class="btn btn-success" href="{% url 'checkout' %}">Checkout</a>
-        <a class="btn btn-secondary" href="{% url 'home' %}">Back to Home</a>
     </div>
+    <!--header section end -->
+
+    <div class="client_section layout_padding">
+        <div class="container">
+          <h1 class="what_taital">View Cart</h1>
+            <div class="table-responsive">
+                <table class="cart-table table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Price</th>
+                            <th>Quantity</th>
+                            <th>Subtotal</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item_with_total in cart_items_with_totals %}
+                        <tr>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <h5 style="margin: 0;">{{ item_with_total.item.product.name }}</h5>
+                                </div>
+                            </td>
+                            <td>${{ item_with_total.item.product.price }}</td>
+                            <td>{{ item_with_total.item.quantity }}</td>
+                            <td>${{ item_with_total.total }}</td>
+                            <td>
+                                <a href="{% url 'remove_from_cart' item_with_total.item.id %}" class="btn btn-danger">Remove One</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="cart-summary">
+                <h4>Cart Summary</h4>
+                <div class="summary-item">
+                    <span>Subtotal:</span>
+                    <span>${{ total }}</span>
+                </div>
+                <div class="summary-item">
+                    <span>Tax:</span>
+                    <span>${{ tax }}</span>
+                </div>
+                <div class="summary-item summary-total">
+                    <span>Total:</span>
+                    <span>${{ grand_total}}</span>
+                </div>
+                <a href="{% url 'checkout' %}" class="btn btn-primary">Proceed to Checkout</a>
+            </div>
+
+            <div class="text-center mt-4">
+                <a class="btn btn-secondary" href="{% url 'home' %}">Continue Shopping</a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="footer_section layout_padding">
+        <div class="container">
+          <div class="row">
+            <div class="col-lg-3 col-sm-6">
+              <h4 class="about_text">About Touheed</h4>
+              <div class="location_text"><img src="{% static 'images/map-icon.png' %}"><span class="padding_left_15">Locations</span></div>
+              <div class="location_text"><img src="{% static 'images/call-icon.png' %}"><span class="padding_left_15">+01 9876543210</span></div>
+              <div class="location_text"><img src="{% static 'images/mail-icon.png' %}"><span class="padding_left_15">demo@gmail.com</span></div>
+            </div>
+            <div class="col-lg-3 col-sm-6">
+              <h4 class="about_text">About Touheed</h4>
+              <p class="dolor_text">ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt</p>
+            </div>
+            <div class="col-lg-3 col-sm-6">
+              <h4 class="about_text">Instagram</h4>
+              <div class="footer_images">
+                <div class="footer_images_left">
+                  <div class="image_12"><img src="{% static 'images/img-12.png' %}"></div>
+                  <div class="image_12"><img src="{% static 'images/img-12.png' %}"></div>
+                  <div class="image_12"><img src="{% static 'images/img-12.png' %}"></div>
+                </div>
+                <div class="footer_images_right">
+                  <div class="image_12"><img src="{% static 'images/img-12.png' %}"></div>
+                  <div class="image_12"><img src="{% static 'images/img-12.png' %}"></div>
+                  <div class="image_12"><img src="{% static 'images/img-12.png' %}"></div>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-3 col-sm-6">
+              <h4 class="about_text">Newsletter</h4>
+              <input type="text" class="mail_text" placeholder="Enter your email" name="Enter your email">
+              <div class="subscribe_bt"><a href="#">Subscribe</a></div>
+              <div class="footer_social_icon">
+                <ul>
+                  <li><a href="#"><img src="{% static 'images/fb-icon1.png' %}"></a></li>
+                   <li><a href="#"><img src="{% static 'images/twitter-icon1.png' %}"></a></li>
+                  <li><a href="#"><img src="{% static 'images/linkedin-icon1.png' %}"></a></li>
+                  <li><a href="#"><img src="{% static 'images/youtub-icon1.png' %}"></a></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <!-- copyright section start -->
+          <div class="copyright_section">
+            <div class="copyright_text">Copyright 2019 All Right Reserved By Yahya bin Usman</div>
+          </div>
+          <!-- copyright section end -->
+        </div>
+    </div>
+    <!--footer section end -->
+
+    <!-- Javascript files-->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js"></script>
+    <script src="{% static 'js/custom.js' %}"></script>
 </body>
 </html>

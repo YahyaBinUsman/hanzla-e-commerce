@@ -6,10 +6,15 @@ from decimal import Decimal
 from .models import Product, CartItem, Order, Review
 from .forms import CheckoutForm, ReviewForm
 from store import models
+from django.shortcuts import render
+from .models import ClientReview
 
 # Home page view
 def home(request):
-    return render(request, 'store/home.html')
+    # Fetch 5-star reviews
+    five_star_reviews = ClientReview.objects.filter(rating=5.0)
+    
+    return render(request, 'store/home.html', {'five_star_reviews': five_star_reviews})
 
 # View cart page
 def view_cart(request):
@@ -68,7 +73,14 @@ def add_to_cart(request, product_id):
 
     return redirect('view_cart')
 
-# Checkout view
+from django.shortcuts import render, get_object_or_404, redirect
+from django.http import HttpResponseBadRequest, JsonResponse
+from django.core.mail import send_mail
+from datetime import datetime, timedelta
+from decimal import Decimal
+from .models import Product, CartItem, Order
+from .forms import CheckoutForm
+
 # Checkout view
 def checkout(request):
     if request.method == 'POST':
@@ -78,18 +90,23 @@ def checkout(request):
             cart_items = CartItem.objects.all()
             products_info = ', '.join([f"{item.product.name} ({item.quantity})" for item in cart_items])
             order.products = products_info
-            
+
             subtotal = sum([item.product.price * item.quantity for item in cart_items])
             tax = subtotal * Decimal('0.17')
             total_price = subtotal + tax
             order.total_price = total_price
             order.save()
-            
+
             for item in cart_items:
                 order.cart_items.add(item)
 
-            # Set the delivery date to one day before the current date
-            order.delivery_date = datetime.now().date() - timedelta(days=1)
+            # Calculate average delivery time
+            total_delivery_time = sum(item.product.delivery_time * item.quantity for item in cart_items)
+            total_quantity = sum(item.quantity for item in cart_items)
+            average_delivery_time = total_delivery_time / total_quantity if total_quantity > 0 else 0
+
+            # Set the delivery date based on average delivery time
+            order.delivery_date = datetime.now().date() + timedelta(days=average_delivery_time)
             order.save()
 
             # Send confirmation email to customer
@@ -124,7 +141,7 @@ def checkout(request):
 
             # Send email to admin
             admin_email_subject = 'A new order has been placed'
-            email_body1 = (
+            admin_email_body = (
                 f'Order details:\n\n'
                 f'First Name: {order.first_name}\n'
                 f'Last Name: {order.last_name}\n'
@@ -144,7 +161,7 @@ def checkout(request):
             )
             send_mail(
                 admin_email_subject,
-                email_body1,
+                admin_email_body,
                 'from@example.com',
                 ['yahyabinusman7@gmail.com'],
                 fail_silently=False,
@@ -156,6 +173,7 @@ def checkout(request):
         form = CheckoutForm(initial={'payment_method': 'Cash on Delivery', 'country': 'Pakistan'})
 
     return render(request, 'store/checkout.html', {'form': form})
+
 from django.http import JsonResponse
 from datetime import date
 from django.core.mail import send_mail
@@ -255,9 +273,12 @@ def testimonials(request):
         'combined_average_rating': combined_average_rating
     })
 
-# Product list page
+from django.db.models import Count, Q
+from .models import Product
+
 def product_list(request, category):
-    products = Product.objects.filter(category=category)
+    # Annotate each product with the count of 5-star reviews
+    products = Product.objects.filter(category=category).annotate(
+        five_star_review_count=Count('reviews', filter=Q(reviews__rating=5))
+    )
     return render(request, 'store/product_list.html', {'products': products, 'category': category})
-
-
