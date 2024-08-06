@@ -13,6 +13,8 @@ from .models import ClientReview
 from django.core.mail import send_mail
 from django.shortcuts import render, redirect
 from django.conf import settings
+from django.contrib.admin.views.decorators import staff_member_required
+from django.db.models import Sum, F
 
 def home(request):
     five_star_reviews = ClientReview.objects.filter(rating=5.0)
@@ -103,17 +105,6 @@ def add_to_cart(request, product_id):
 
     return redirect(request.META.get('HTTP_REFERER', 'home'))
 
-from django.shortcuts import render, redirect
-from django.http import HttpResponseBadRequest
-from django.utils import timezone
-from datetime import timedelta
-from decimal import Decimal
-from .models import CityDeliveryInfo, CartItem, Order, DailyDiscountCode
-from .forms import CheckoutForm
-from django.core.mail import send_mail
-from django.conf import settings
-from django.contrib import messages
-
 def checkout(request):
     generate_daily_discount_code()  # Generate and email the code
 
@@ -122,12 +113,23 @@ def checkout(request):
         if form.is_valid():
             discount_code = request.POST.get('discount_code', '')
             today_code = DailyDiscountCode.objects.filter(date=date.today(), code=discount_code).first()
+            permanent_code = '2pd93al8'
+            discount = Decimal('0.00')
+            discount_applied = False
 
-            if discount_code and not today_code:
-                return HttpResponseBadRequest('Invalid discount code')
+            if discount_code and discount_code != permanent_code:
+                if not today_code:
+                    return HttpResponseBadRequest('Invalid discount code')
 
-            if discount_code and request.user in today_code.used_by.all():
-                return HttpResponseBadRequest('You have already used today\'s discount code')
+                if request.user in today_code.used_by.all():
+                    return HttpResponseBadRequest('You have already used today\'s discount code')
+                today_code.used_by.add(request.user)
+                today_code.save()
+                discount = Decimal('0.10')
+                discount_applied = True
+            elif discount_code == permanent_code:
+                discount = Decimal('0.10')
+                discount_applied = True
 
             order = form.save(commit=False)
             cart_items = CartItem.objects.all()
@@ -135,14 +137,8 @@ def checkout(request):
             order.products = products_info
 
             subtotal = sum([item.product.price * item.quantity for item in cart_items])
-            discount = Decimal('0.00')
-
-            if today_code:
-                discount = subtotal * Decimal('0.10')  # 10% discount
-                today_code.used_by.add(request.user)
-                today_code.save()
-
-            subtotal -= discount
+            discount_amount = subtotal * discount
+            subtotal -= discount_amount
             tax = subtotal * Decimal('0.17')
             total_price = subtotal + tax
 
@@ -172,6 +168,11 @@ def checkout(request):
             order.user = request.user
             order.save()
 
+            # Prepare the discount message
+            discount_message = ''
+            if discount_applied:
+                discount_message = f'A discount of 10% has been applied to your order.\n\n'
+
             # Send confirmation email to customer
             email_subject = 'Order Confirmation'
             email_body = (
@@ -188,11 +189,12 @@ def checkout(request):
                 f'Country: {order.country}\n'
                 f'Order Date: {order.order_date}\n'
                 f'Delivery Date: {order.delivery_date}\n'
-                f'Subtotal: ${subtotal}\n'
-                f'Tax (17%): ${tax}\n'
-                f'Delivery Charge: ${delivery_charge}\n'
-                f'Total Price (After Tax): ${order.total_price}\n\n'
+                f'Subtotal: Rs {subtotal}\n'
+                f'Tax (17%): Rs {tax}\n'
+                f'Delivery Charge: Rs {delivery_charge}\n'
+                f'Total Price (After Tax): Rs {order.total_price}\n\n'
                 f'Products:\n{order.products}\n\n'
+                f'{discount_message}'
                 f'Your order has been received. Please expect a delivery confirmation email soon.'
             )
             send_mail(
@@ -218,11 +220,12 @@ def checkout(request):
                 f'Country: {order.country}\n'
                 f'Order Date: {order.order_date}\n'
                 f'Delivery Date: {order.delivery_date}\n'
-                f'Subtotal: ${subtotal}\n'
-                f'Tax (17%): ${tax}\n'
-                f'Delivery Charge: ${delivery_charge}\n'
-                f'Total Price (After Tax): ${order.total_price}\n\n'
+                f'Subtotal: Rs {subtotal}\n'
+                f'Tax (17%): Rs {tax}\n'
+                f'Delivery Charge: Rs {delivery_charge}\n'
+                f'Total Price (After Tax): Rs {order.total_price}\n\n'
                 f'Products:\n{order.products}\n\n'
+                f'{discount_message}'
             )
             send_mail(
                 admin_email_subject,
@@ -259,10 +262,20 @@ def check_delivery_dates(request):
 def order_confirmation(request):
     return render(request, 'store/order_confirmation.html')
 
-# Order details page for admin
+@staff_member_required
 def order_details(request):
-    orders = Order.objects.all()
-    return render(request, 'store/order_details.html', {'orders': orders})
+    # Filter orders to show only those that have not been reviewed
+    pending_orders = Order.objects.filter(reviewed=False)
+
+    # Calculate total sales for reviewed orders
+    total_sales = Order.objects.filter(reviewed=True).aggregate(total_sales=Sum('total_price'))['total_sales'] or 0
+
+    return render(request, 'store/order_details.html', {
+        'orders': pending_orders,
+        'total_sales': total_sales
+    })
+
+
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponseBadRequest
 from decimal import Decimal

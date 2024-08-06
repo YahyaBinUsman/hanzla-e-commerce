@@ -162,9 +162,9 @@
                                     <h5 style="margin: 0;">{{ item_with_total.item.product.name }}</h5>
                                 </div>
                             </td>
-                            <td>${{ item_with_total.item.product.price }}</td>
+                            <td>Rs {{ item_with_total.item.product.price }}</td>
                             <td>{{ item_with_total.item.quantity }}</td>
-                            <td>${{ item_with_total.total }}</td>
+                            <td>Rs {{ item_with_total.total }}</td>
                             <td>
                                 <a href="{% url 'remove_from_cart' item_with_total.item.id %}" class="btn btn-danger">Remove One</a>
                             </td>
@@ -178,15 +178,15 @@
                 <h4>Cart Summary</h4>
                 <div class="summary-item">
                     <span>Subtotal:</span>
-                    <span>${{ total }}</span>
+                    <span>Rs {{ total }}</span>
                 </div>
                 <div class="summary-item">
                     <span>Tax:</span>
-                    <span>${{ tax }}</span>
+                    <span>Rs {{ tax }}</span>
                 </div>
                 <div class="summary-item summary-total">
                     <span>Total:</span>
-                    <span>${{ grand_total}}</span>
+                    <span>Rs {{ grand_total}}</span>
                 </div>
                 <a href="{% url 'checkout' %}" class="btn btn-primary">Proceed to Checkout</a>
             </div>
