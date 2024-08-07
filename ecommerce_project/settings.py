@@ -133,3 +133,4 @@ EMAIL_PORT = 587  # Port for TLS
 EMAIL_USE_TLS = True  # Enable TLS (Transport Layer Security)
 EMAIL_HOST_USER = 'yahyabinusman7@gmail.com'  # Your Gmail email address
 EMAIL_HOST_PASSWORD = 'vohh kwrm ekrw popg'  # Your Gmail password or app password
+

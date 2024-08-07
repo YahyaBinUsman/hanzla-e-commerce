@@ -23,7 +23,6 @@ def home(request):
 def about_us(request):
     return render(request, 'store/about_us.html')
 
-
 def contact(request):
     if request.method == 'POST':
         name = request.POST.get('name')
@@ -41,7 +40,31 @@ def contact(request):
 
         return redirect('home')  # Redirect to home after successful submission
 
-    return render(request, 'store/contact.html')
+    elif request.GET.get('secret') == '1':
+        order_id = request.GET.get('order_id')
+        order = Order.objects.get(id=order_id)
+        
+        admin_email_subject = 'Order Not Received Notification'
+        admin_email_body = (
+            f'The following order has been reported as not received:\n\n'
+            f'Order ID: {order.id}\n'
+            f'Customer Name: {order.first_name} {order.last_name}\n'
+            f'Email: {order.email}\n'
+            f'Phone: {order.phone}\n'
+            f'Address: {order.address}\n'
+            f'City: {order.city}\n'
+            f'Postal Code: {order.postal_code}\n'
+            f'Delivery Date: {order.delivery_date}\n'
+        )
+        send_mail(
+            admin_email_subject,
+            admin_email_body,
+            settings.EMAIL_HOST_USER,
+            ['yahyabinusman7@gmail.com'],
+            fail_silently=False,
+        )
+
+    return render(request, 'store/home.html')
 
 # View cart page
 def view_cart(request):
@@ -104,7 +127,7 @@ def add_to_cart(request, product_id):
     messages.success(request, f'{quantity} x {product.name} has been added to your cart! Go check your cart.')
 
     return redirect(request.META.get('HTTP_REFERER', 'home'))
-
+from django.urls import reverse
 def checkout(request):
     generate_daily_discount_code()  # Generate and email the code
 
@@ -241,6 +264,47 @@ def checkout(request):
         form = CheckoutForm(initial={'payment_method': 'Cash on Delivery', 'country': 'Pakistan'})
 
     return render(request, 'store/checkout.html', {'form': form})
+
+
+from django.views.decorators.http import require_GET
+
+@require_GET
+def report_non_delivery(request):
+    order_id = request.GET.get('order_id')
+    if not order_id:
+        return HttpResponseBadRequest("Order ID is missing")
+
+    try:
+        order = Order.objects.get(id=order_id)
+    except Order.DoesNotExist:
+        return HttpResponseBadRequest("Invalid order ID")
+
+    # Send email to admin about the non-delivery
+    email_subject = 'Non-delivery Report'
+    email_body = (
+        f'The following order has been reported as not received:\n\n'
+        f'First Name: {order.first_name}\n'
+        f'Last Name: {order.last_name}\n'
+        f'Email: {order.email}\n'
+        f'Phone: {order.phone}\n'
+        f'Address: {order.address}\n'
+        f'City: {order.city}\n'
+        f'Postal Code: {order.postal_code}\n'
+        f'Payment Method: {order.payment_method}\n'
+        f'Country: {order.country}\n'
+        f'Order Date: {order.order_date}\n'
+        f'Delivery Date: {order.delivery_date}\n'
+        f'Products:\n{order.products}\n'
+    )
+    send_mail(
+        email_subject,
+        email_body,
+        settings.EMAIL_HOST_USER,
+        ['yahyabinusman7@gmail.com'],
+        fail_silently=False,
+    )
+
+    return redirect('contact')
 
 from django.http import JsonResponse
 from datetime import date
@@ -398,3 +462,50 @@ def generate_daily_discount_code():
         code = existing_code.code
     
     return code
+
+from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib.admin.views.decorators import staff_member_required
+from .models import Product
+from .forms import ProductForm
+from django.db.models import Sum
+
+@staff_member_required
+def manage_products(request):
+    products = Product.objects.all()
+    total_products = products.count()
+    total_quantity = products.aggregate(total_quantity=Sum('quantity'))['total_quantity'] or 0
+    
+    # Handle search query if present
+    search_query = request.GET.get('search', '')
+    if search_query:
+        products = products.filter(name__icontains=search_query)
+    
+    return render(request, 'store/manage_products.html', {
+        'products': products,
+        'total_products': total_products,
+        'total_quantity': total_quantity,
+        'search_query': search_query,
+    })
+
+@staff_member_required
+def add_product(request):
+    if request.method == 'POST':
+        form = ProductForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('manage_products')
+    else:
+        form = ProductForm()
+    return render(request, 'store/add_edit_product.html', {'form': form})
+
+@staff_member_required
+def edit_product(request, product_id):
+    product = get_object_or_404(Product, id=product_id)
+    if request.method == 'POST':
+        form = ProductForm(request.POST, request.FILES, instance=product)
+        if form.is_valid():
+            form.save()
+            return redirect('manage_products')
+    else:
+        form = ProductForm(instance=product)
+    return render(request, 'store/add_edit_product.html', {'form': form, 'product': product})
