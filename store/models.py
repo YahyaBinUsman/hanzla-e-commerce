@@ -90,6 +90,11 @@ class Order(models.Model):
     review_token = models.UUIDField(default=uuid.uuid4)
     review_email_sent = models.BooleanField(default=False)
     reviewed = models.BooleanField(default=False)
+    not_received_clicked = models.BooleanField(default=False)
+    not_received_click_time = models.DateTimeField(null=True, blank=True)
+    review_token_expiry = models.DateTimeField(default=timezone.now() + timedelta(days=30))
+
+    is_received = models.BooleanField(default=False)
 
     def __str__(self):
         return f"Order {self.id} by {self.first_name} {self.last_name}"

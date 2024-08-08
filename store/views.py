@@ -23,7 +23,7 @@ def home(request):
 def about_us(request):
     return render(request, 'store/about_us.html')
 
-def contact(request):
+def contact1(request):
     if request.method == 'POST':
         name = request.POST.get('name')
         phone_number = request.POST.get('phone_number')
@@ -65,6 +65,76 @@ def contact(request):
         )
 
     return render(request, 'store/home.html')
+
+from django.shortcuts import render, redirect
+from django.http import HttpResponse
+from django.utils import timezone
+from django.core.mail import send_mail
+from django.urls import reverse
+from .models import Order
+
+from django.shortcuts import render, redirect
+from django.http import HttpResponse
+from django.utils import timezone
+from django.core.mail import send_mail
+from django.urls import reverse
+from .models import Order
+from django.shortcuts import render, redirect
+from django.http import HttpResponse
+from django.utils import timezone
+from django.core.mail import send_mail
+from django.urls import reverse
+from .models import Order
+
+def contact(request, order_id):
+    if request.method == 'POST':
+        message = request.POST.get('message')
+        order = Order.objects.get(id=order_id)
+        order.not_received_clicked = True
+        order.not_received_click_time = timezone.now()
+        order.save()
+
+        # Send email to admin about the non-delivery
+        admin_email_subject = 'Order Not Received Notification'
+        admin_email_body = (
+            f'The following order has been reported as not received:\n\n'
+            f'Order ID: {order.id}\n'
+            f'Customer Name: {order.first_name} {order.last_name}\n'
+            f'Email: {order.email}\n'
+            f'Phone: {order.phone}\n'
+            f'Address: {order.address}\n'
+            f'City: {order.city}\n'
+            f'Postal Code: {order.postal_code}\n'
+            f'Delivery Date: {order.delivery_date}\n\n'
+            f'Message from customer: {message}'
+        )
+        send_mail(
+            admin_email_subject,
+            admin_email_body,
+            settings.EMAIL_HOST_USER,
+            ['yahyabinusman7@gmail.com'],
+            fail_silently=False,
+        )
+
+        # Send an email to the customer acknowledging the issue
+        customer_email_subject = 'We are sorry for the inconvenience'
+        customer_email_body = (
+            f'Dear {order.first_name},\n\n'
+            f'We are truly sorry for the inconvenience regarding your order #{order.id}.\n'
+            f'We will contact our staff to resolve the issue, and you can expect a response within two days.\n\n'
+            f'Thank you for your patience.'
+        )
+        send_mail(
+            customer_email_subject,
+            customer_email_body,
+            settings.EMAIL_HOST_USER,
+            [order.email],
+            fail_silently=False,
+        )
+
+        return HttpResponse('Thank you for contacting us. We will get back to you shortly.')
+
+    return render(request, 'store/contact.html')
 
 # View cart page
 def view_cart(request):
